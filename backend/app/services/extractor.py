@@ -6,6 +6,8 @@ from nlp_data.education import get_universities
 import re
 from fuzzywuzzy import fuzz, process
 
+nlp = spacy.load("en_core_web_sm")
+
 class NLPExtractor():
     def __init__(self, resume):
         # Load spaCy English model
@@ -34,12 +36,6 @@ class NLPExtractor():
                 found_jobs.append(job_title)
         return found_jobs
     
-    """
-    def extract_years_experience(self, text):
-        # add later
-        pass 
-    """
-
     def extract_education(self):
         # Extracting all or any universities attended4
         found_unis = []
@@ -48,23 +44,41 @@ class NLPExtractor():
             if re.search(pattern, self.resume_clean):
                 found_unis.append(uni)
         return found_unis
+    
+    def extract_companies(self):
+        found_companies = []
+        company_suffixes = ["inc", "llc", "corp", "ltd", "co", "company", "firm", "agency", "partnership"]
+        cleaned_text = re.sub(r'\s+', ' ', self.resume)
+        doc = nlp(cleaned_text)
+        for ent in doc.ents:
+            print(ent.text, ent.label_)
+            if ent.label_ == "ORG":
+                name = ent.text.strip()
+                if name in found_companies:
+                    continue
+                elif any(name.lower().endswith(suf) for suf in company_suffixes) and name.lower() not in company_suffixes:
+                    found_companies.append(name)
+        return found_companies
+
+    def extract_years_experience(self, text):
+    # add later
+        pass 
 
 if __name__=="__main__":
     # 1. Parse PDF
-    pdf_parser = ParsePDF(r"C:\Users\leibn\Downloads\Resume (1).pdf")
+    pdf_parser = ParsePDF(r"C:\Users\leibn\Downloads\Leib Roth Resume.docx (16) (1).pdf")
     parsed_text = pdf_parser.parse()
-    print(parsed_text)
-    
- 
+
     #2. Initialize extractor
     extractor = NLPExtractor(parsed_text)
 
     skills_found = extractor.extract_skills()
     jobs_found = extractor.extract_job_titles()
     education_found = extractor.extract_education()
+    companies_found = extractor.extract_companies()
 
 
     print(skills_found)
     print(jobs_found)
-    print(education_found)
-   
+    print(education_found)   
+    print(companies_found)

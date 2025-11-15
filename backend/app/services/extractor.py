@@ -4,6 +4,7 @@ from nlp_data.skills import skills
 from nlp_data.job_titles import job_titles
 from nlp_data.education import get_universities
 import re
+from fuzzywuzzy import fuzz, process
 
 class NLPExtractor():
     def __init__(self, resume):

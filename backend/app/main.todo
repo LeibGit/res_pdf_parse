@@ -1,0 +1,11 @@
+Extractor:
+    ☐ Add fuzzy word and acronym use cases on text extractor
+
+Done:
+    ☐ Created a parser to parse pdf documents
+    ☐ Created an extractor that sorts through numerous lists to pull 
+key job experience, universities attended, and skills from a resume, demonstarting 
+knowledge on extracting key information, and cleaning data
+    ☐ Integrated a NLP tool to handle different copywrite representing the desired key phrase I wanted to extract. For example
+NYU is important because it represents New York University. User experience designer = UX designer. THis was done using Levenshtein distance model which calculates the number
+of operations needed to transform one string into another.

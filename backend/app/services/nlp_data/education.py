@@ -3,6 +3,7 @@ import pandas as pd
 csv_path = r"C:\Users\leibn\Downloads\us-colleges-and-universities.csv\us-colleges-and-universities.csv"
 # let pandas handle quoted strings
 df = pd.read_csv(csv_path, quotechar='"', engine='python', sep=None)
+print(df.head())
 uni_names = df["NAME"]
 
 def get_universities():

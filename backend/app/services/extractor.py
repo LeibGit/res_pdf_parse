@@ -63,22 +63,3 @@ class NLPExtractor():
     def extract_years_experience(self, text):
     # add later
         pass 
-
-if __name__=="__main__":
-    # 1. Parse PDF
-    pdf_parser = ParsePDF(r"C:\Users\leibn\Downloads\Leib Roth Resume.docx (16) (1).pdf")
-    parsed_text = pdf_parser.parse()
-
-    #2. Initialize extractor
-    extractor = NLPExtractor(parsed_text)
-
-    skills_found = extractor.extract_skills()
-    jobs_found = extractor.extract_job_titles()
-    education_found = extractor.extract_education()
-    companies_found = extractor.extract_companies()
-
-
-    print(skills_found)
-    print(jobs_found)
-    print(education_found)   
-    print(companies_found)

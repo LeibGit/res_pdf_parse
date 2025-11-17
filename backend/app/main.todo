@@ -1,11 +1,27 @@
-Extractor:
-    ☐ Add fuzzy word and acronym use cases on text extractor
+Parser:
+    ✔ Created a pdf text parser to parse any pdf and return raw text @done (11/15/2025, 10:13:59 PM)
 
-Done:
-    ☐ Created a parser to parse pdf documents
-    ☐ Created an extractor that sorts through numerous lists to pull 
-key job experience, universities attended, and skills from a resume, demonstarting 
-knowledge on extracting key information, and cleaning data
-    ☐ Integrated a NLP tool to handle different copywrite representing the desired key phrase I wanted to extract. For example
-NYU is important because it represents New York University. User experience designer = UX designer. THis was done using Levenshtein distance model which calculates the number
-of operations needed to transform one string into another.
+NLP Extractor:
+    ✔ Add fuzzy word and acronym use cases on text extractor @done (11/15/2025, 10:12:21 PM)
+
+Resume Large Language Model:
+    @Input
+    ☐ Takes structured data from NLP Extractor
+    ☐ Takes raw text from the parser
+
+    @output
+    ☐ Summary
+    ☐ ATS Score / Fit Score (Client input on job description)
+    ☐ Keyword Gaps => Skills missing for the role
+    ☐ Suggested improvements to resume
+    ☐ Summary / Insights
+    ☐ Suggested improvements to resume
+    
+Inisghts/Untracked:
+    ✔ Created a parser to parse pdf documents @done (11/15/2025, 10:12:30 PM)
+    ✔ Created an extractor that sorts through numerous lists to pull @done (11/15/2025, 10:12:32 PM)
+    key job experience, universities attended, and skills from a resume, demonstarting 
+    knowledge on extracting key information, and cleaning data
+    ✔ Integrated a NLP tool to handle different copywrite representing the desired key phrase I wanted to extract. For example @done (11/15/2025, 10:12:33 PM)
+    NYU is important because it represents New York University. User experience designer = UX designer. THis was done using Levenshtein distance model which calculates the number
+    of operations needed to transform one string into another.

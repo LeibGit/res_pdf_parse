@@ -34,16 +34,28 @@ class ResumeLLMAnalyzer():
 
     def resume_summary(self):
         skills = self.skills
+        jobs = self.titles
+        companies = self.companies
+    
         summary = self.client.chat.completions.create(
             messages = [
                 {
                     "role": "system", 
-                    "content": f"""You are a thorough AI agent that analyzes resumes. 
-                    Please provide a breif 4 sentence summary of this persons skills."""
+                    "content": f"""You are an analytical AI that summarizes resumes using only the information provided.
+                        Write a concise **3-sentence factual summary** describing this persons:
+                        1. Key skills
+                        2. Relevant experience
+                        3. Professional strengths
+
+                        Rules:
+                        - **Use only information explicitly present in the resume.**
+                        - **No assumptions, guesses, or inferred details.**
+                        - Keep the tone objective, professional, and neutral.
+                    """
                 }, 
                 {
                     "role": "user",
-                    "content": f"{skills}"
+                    "content": f"Skills: {skills} Job Titles: {jobs} Companies: {companies}"
                 }
             ], 
             model=self.model

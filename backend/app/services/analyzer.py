@@ -105,15 +105,18 @@ class ResumeLLMAnalyzer():
             messages=[
                 {
                 "role": "system",
-                "content": f"""Given the ats score provided {self.ats_score()} provide reasoning based on the {job_prompt} and the users 
-                relevant skills: {skills}, job exerience: {jobs} in relation to the company they are applying for's prestige and requirements given in the {job_prompt}
-                Rules:
-                1. be unbiased nor in favor of the users resume or the job not wanting them
-                2. make critical connections between the role description and the persons resume and why they recieved the score they did.
-                3. Keep the response short, 3 sentences tops.
-                4. Don't be passive or use words like the score is "blank" likely becuase of "blank". You are the one who came up with the score so say why. 
-                5. Don't pretend you are a human, just say the score is this because of this.
-                6. Cross reference the companies prestige level they are applying to and if it is reasonable to attain given their job experience.
+                "content": f"""### TASK:
+                    Provide:
+                    1. An ATS match score from 0–100  
+                    2. A short summary explaining why the score is what it is  
+                    3. The top strengths that match the job description  
+                    4. The key missing skills or gaps that reduce the score  
+
+                    ### RULES:
+                    - Base all scoring ONLY on the job description below.
+                    - Do NOT infer skills that are not explicitly stated in the resume.
+                    - If the resume hints at something but does not directly state it, do NOT count it.
+                    - answer in 2-3 sentences
                 """
                 },
                 {
@@ -136,16 +139,13 @@ class ResumeLLMAnalyzer():
             messages= [
                 {
                     "role": "system", 
-                    "content": f"""Here is your chance to provide in detail, reccomendations the user can implement on their resume to improve their likelyhood of 
-                    getting the role. Please also do a background analysis on the company the are applying too and any relevant information on what they expect from
-                    applicants for that specific role. This should be in the {job_prompt}.
-                    Rules:
-                    1. be unbiased nor in favor of the users resume or the job not wanting them
-                    2. make critical connections between the role description and the persons resume.
-                    3. Keep the response short, 3 sentences tops.
-                    4. Don't be passive or use words like the score is "blank" likely becuase of "blank". You are the one who came up with the score so say why. 
-                    5. Don't pretend you are a human, just say the score is this because of this.
-                    6. Cross reference the companies prestige level they are applying to and if it is reasonable to attain given their job experience.
+                    "content": f"""Provide a list of improvements that will meaningfully strengthen this resume.
+                    ### RULES:
+                    - Do NOT invent experience, job titles, or achievements.
+                    - Only suggest improvements based on what is already present.
+                    - Be specific (e.g., “Quantify achievements 
+                    - If you believe the user needs additional exerience in certian areas mention that
+                    - answer in 2-3 sentences.
                     """
                 }, 
                 {

@@ -10,13 +10,13 @@ Resume Large Language Model:
     ☐ Takes raw text from the parser
 
     @output
-    ☐ Summary
-    ☐ ATS Score / Fit Score (Client input on job description)
-    ☐ Keyword Gaps => Skills missing for the role
-    ☐ Suggested improvements to resume
+    ✔ Summary @done (11/17/2025, 10:54:20 PM)
+    ✔ ATS Score / Fit Score (Client input on job description) @done (11/17/2025, 10:54:22 PM)
+    ✔ Keyword Gaps => Skills missing for the role @done (11/17/2025, 10:54:58 PM)
+    ☐ ATS score summary => Highlight score in relation to job prompt.  
+    ☐ Suggested improvements to resume 
     ☐ Summary / Insights
-    ☐ Suggested improvements to resume
-    
+
 Inisghts/Untracked:
     ✔ Created a parser to parse pdf documents @done (11/15/2025, 10:12:30 PM)
     ✔ Created an extractor that sorts through numerous lists to pull @done (11/15/2025, 10:12:32 PM)

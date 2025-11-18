@@ -3,38 +3,27 @@ from dotenv import load_dotenv
 from extractor import NLPExtractor
 from parser import ParsePDF
 from groq import Groq
+import time
 
 load_dotenv()
 
 
 # Once frontend integration, plan to cross reference ATS score with a specic role description prompt
 
-"""
-
-llm_client = client.chat.completions.create(
-    messages=[
-        {
-            "role": "system", 
-            "content": You are an assisant that judges user resume's based on a job description 
-            they are going for.You are extremely thoughtfull, creative, and insightfull.,
-        }
-    ],
-    model="llama-3.3-70b-versatile"
-)
-"""
 class ResumeLLMAnalyzer():
 
     client = Groq(
     api_key=os.getenv("GROK_KEY")
 )
     
-    def __init__(self, llm_client=client, full_text=None, skills=None, titles=None, companies=None):
+    def __init__(self, llm_client=client, full_text=None, skills=None, titles=None, companies=None, prompt=None):
         self.client = llm_client # initialize the groq client
         self.model = "llama-3.3-70b-versatile" # get LLM model
         self.skills = skills
         self.titles = titles
         self.companies = companies
         self.full_text = full_text
+        self.prompt = prompt
 
     def resume_summary(self):
         skills = self.skills
@@ -77,7 +66,7 @@ class ResumeLLMAnalyzer():
         jobs = self.titles
         skills = self.skills
         # replace with user input of job prompt.
-        job_prompt = "Software engineering job at google."
+        job_prompt = self.prompt
 
         ats = self.client.chat.completions.create(
             messages= [
@@ -103,7 +92,71 @@ class ResumeLLMAnalyzer():
             model=self.model 
         )
         return ats.choices[0].message.content
-        
+    
+    def ats_description(self):
+        text = self.full_text
+        companies = self.companies
+        jobs = self.titles
+        skills = self.skills
+        # replace with user input of job prompt.
+        job_prompt = self.prompt
+
+        ats_descript = self.client.chat.completions.create(
+            messages=[
+                {
+                "role": "system",
+                "content": f"""Given the ats score provided {self.ats_score()} provide reasoning based on the {job_prompt} and the users 
+                relevant skills: {skills}, job exerience: {jobs} in relation to the company they are applying for's prestige and requirements given in the {job_prompt}
+                Rules:
+                1. be unbiased nor in favor of the users resume or the job not wanting them
+                2. make critical connections between the role description and the persons resume and why they recieved the score they did.
+                3. Keep the response short, 3 sentences tops.
+                4. Don't be passive or use words like the score is "blank" likely becuase of "blank". You are the one who came up with the score so say why. 
+                5. Don't pretend you are a human, just say the score is this because of this.
+                6. Cross reference the companies prestige level they are applying to and if it is reasonable to attain given their job experience.
+                """
+                },
+                {
+                    "role": "user",
+                    "content": f"Skills: {skills} Job Titles: {jobs} Companies: {companies} Text: {text} Job_description: {job_prompt}"
+                }
+            ],
+            model=self.model
+        )
+        return ats_descript.choices[0].message.content
+    
+    def resume_reccomendations(self):
+        text = self.full_text
+        skills =self.skills
+        jobs = self.titles
+        companies = self.companies
+        job_prompt = self.prompt
+
+        reccomendations = self.client.chat.completions.create(
+            messages= [
+                {
+                    "role": "system", 
+                    "content": f"""Here is your chance to provide in detail, reccomendations the user can implement on their resume to improve their likelyhood of 
+                    getting the role. Please also do a background analysis on the company the are applying too and any relevant information on what they expect from
+                    applicants for that specific role. This should be in the {job_prompt}.
+                    Rules:
+                    1. be unbiased nor in favor of the users resume or the job not wanting them
+                    2. make critical connections between the role description and the persons resume.
+                    3. Keep the response short, 3 sentences tops.
+                    4. Don't be passive or use words like the score is "blank" likely becuase of "blank". You are the one who came up with the score so say why. 
+                    5. Don't pretend you are a human, just say the score is this because of this.
+                    6. Cross reference the companies prestige level they are applying to and if it is reasonable to attain given their job experience.
+                    """
+                }, 
+                {
+                    "role": "user",
+                    "content": f"Skills: {skills} Job Titles: {jobs} Companies: {companies} Text: {text} Job_description: {job_prompt}"
+                }
+            ], 
+            model=self.model
+        )
+        return reccomendations.choices[0].message.content 
+
 
 if __name__=="__main__":
     pdf_parser = ParsePDF(r"C:\Users\leibn\Downloads\Leib Roth Resume.docx (16) (1).pdf")
@@ -113,7 +166,12 @@ if __name__=="__main__":
     skls = extractor.extract_skills()
     jbs = extractor.extract_job_titles()
     cmpns =extractor.extract_job_titles()
-
-    new_resume = ResumeLLMAnalyzer(full_text=parsed_text, skills=skls, titles=jbs, companies=cmpns)
+    start_time = time.time()
+    new_resume = ResumeLLMAnalyzer(full_text=parsed_text, skills=skls, titles=jbs, companies=cmpns, prompt="Software engineering job at google.")
     print(new_resume.resume_summary())
     print(new_resume.ats_score())
+    print(new_resume.ats_description())
+    print(new_resume.resume_reccomendations())
+    end_time = time.time()
+    total_load_time = end_time - start_time
+    print(f"Model load time was: {total_load_time}")

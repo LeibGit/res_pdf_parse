@@ -9,6 +9,13 @@ Resume Large Language Model:
     ☐ Takes structured data from NLP Extractor
     ☐ Takes raw text from the parser
 
+
+API:
+    ☐ Got fastapi backend started
+    ☐ create necessary endpoints to run the model
+        ☐ Post request to feed into text parser. 
+        ☐ Get Request => Summary, ATS, ATS Summary, improvements
+
     @output
     ✔ Summary @done (11/17/2025, 10:54:20 PM)
     ✔ ATS Score / Fit Score (Client input on job description) @done (11/17/2025, 10:54:22 PM)

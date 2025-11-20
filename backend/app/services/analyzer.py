@@ -1,27 +1,26 @@
 import os
 from dotenv import load_dotenv
-from extractor import NLPExtractor
-from parser import ParsePDF
+from .extractor import NLPExtractor
+from .parser import ParsePDF
 from groq import Groq
 import time
 
 load_dotenv()
 
-
 # Once frontend integration, plan to cross reference ATS score with a specic role description prompt
 
 class ResumeLLMAnalyzer():
-
     client = Groq(
     api_key=os.getenv("GROK_KEY")
 )
     
-    def __init__(self, llm_client=client, full_text=None, skills=None, titles=None, companies=None, prompt=None):
+    def __init__(self, llm_client=client, full_text=None, skills=None, titles=None, companies=None, education=None, prompt=None):
         self.client = llm_client # initialize the groq client
         self.model = "llama-3.3-70b-versatile" # get LLM model
         self.skills = skills
         self.titles = titles
         self.companies = companies
+        self.education = education
         self.full_text = full_text
         self.prompt = prompt
 
@@ -29,7 +28,9 @@ class ResumeLLMAnalyzer():
         skills = self.skills
         jobs = self.titles
         companies = self.companies
+        education = self.education
         text = self.full_text
+        job_prompt = self.prompt
         summary = self.client.chat.completions.create(
             messages = [
                 {
@@ -39,6 +40,7 @@ class ResumeLLMAnalyzer():
                         1. Key skills
                         2. Relevant experience
                         3. Professional strengths
+                        4. Education highlights
 
                         Rules:
                         - **Use only information explicitly present in the resume.**
@@ -53,17 +55,18 @@ class ResumeLLMAnalyzer():
                 }, 
                 {
                     "role": "user",
-                    "content": f"Skills: {skills} Job Titles: {jobs} Companies: {companies} Text: {text}"
+                    "content": f"Skills: {skills} Job Titles: {jobs} Companies: {companies} Text: {text} education: {education} Job_description: {job_prompt}"
                 }
             ], 
             model=self.model
         )
         return summary.choices[0].message.content
 
-    def ats_score(self):
+    def ats_score(self)
         text = self.full_text
         companies = self.companies
         jobs = self.titles
+        education = self.education
         skills = self.skills
         # replace with user input of job prompt.
         job_prompt = self.prompt
@@ -77,7 +80,7 @@ class ResumeLLMAnalyzer():
                             1. Skills of the applicant
                             2. job exerience of the applicant
                             3. the prestige or recognition of the companies they worked at
-                            4. {skills}, {companies}, {jobs} in relevence and prestige to {job_prompt}
+                            4. {skills}, {companies}, {jobs}, {education} in relevence and prestige to {job_prompt} and company.
                         Rules:
                             1. be unbiased nor in favor or not
                             2. make critical connections between the role description and the persons resume
@@ -86,7 +89,7 @@ class ResumeLLMAnalyzer():
                 }, 
                 {
                     "role": "user",
-                    "content": f"Skills: {skills} Job Titles: {jobs} Companies: {companies} Text: {text} Job_description: {job_prompt}"
+                    "content": f"Skills: {skills} Job Titles: {jobs} Companies: {companies} Text: {text} education: {education} Job_description: {job_prompt}"
                 }
             ], 
             model=self.model 
@@ -97,6 +100,7 @@ class ResumeLLMAnalyzer():
         text = self.full_text
         companies = self.companies
         jobs = self.titles
+        education = self.education
         skills = self.skills
         # replace with user input of job prompt.
         job_prompt = self.prompt
@@ -110,18 +114,19 @@ class ResumeLLMAnalyzer():
                     1. An ATS match score from 0–100  
                     2. A short summary explaining why the score is what it is  
                     3. The top strengths that match the job description  
-                    4. The key missing skills or gaps that reduce the score  
+                    4. The key missing skills/experience/education or gaps that reduce the score  
 
                     ### RULES:
                     - Base all scoring ONLY on the job description below.
                     - Do NOT infer skills that are not explicitly stated in the resume.
                     - If the resume hints at something but does not directly state it, do NOT count it.
                     - answer in 2-3 sentences
+                    - dont mention the actual ats score, that was already done with another prompt
                 """
                 },
                 {
                     "role": "user",
-                    "content": f"Skills: {skills} Job Titles: {jobs} Companies: {companies} Text: {text} Job_description: {job_prompt}"
+                    "content": f"Skills: {skills} Job Titles: {jobs} Companies: {companies} Text: {text} Education: {education} Job_description: {job_prompt}"
                 }
             ],
             model=self.model
@@ -132,6 +137,7 @@ class ResumeLLMAnalyzer():
         text = self.full_text
         skills =self.skills
         jobs = self.titles
+        education = self.education
         companies = self.companies
         job_prompt = self.prompt
 
@@ -150,28 +156,9 @@ class ResumeLLMAnalyzer():
                 }, 
                 {
                     "role": "user",
-                    "content": f"Skills: {skills} Job Titles: {jobs} Companies: {companies} Text: {text} Job_description: {job_prompt}"
+                    "content": f"Skills: {skills} Job Titles: {jobs} Companies: {companies} Text: {text} Education: {education} Job_description: {job_prompt}"
                 }
             ], 
             model=self.model
         )
         return reccomendations.choices[0].message.content 
-
-
-if __name__=="__main__":
-    pdf_parser = ParsePDF(r"C:\Users\leibn\Downloads\Leib Roth Resume.docx (16) (1).pdf")
-    parsed_text = pdf_parser.parse()
-    extractor = NLPExtractor(parsed_text)
-
-    skls = extractor.extract_skills()
-    jbs = extractor.extract_job_titles()
-    cmpns =extractor.extract_job_titles()
-    start_time = time.time()
-    new_resume = ResumeLLMAnalyzer(full_text=parsed_text, skills=skls, titles=jbs, companies=cmpns, prompt="Software engineering job at google.")
-    print(new_resume.resume_summary())
-    print(new_resume.ats_score())
-    print(new_resume.ats_description())
-    print(new_resume.resume_reccomendations())
-    end_time = time.time()
-    total_load_time = end_time - start_time
-    print(f"Model load time was: {total_load_time}")

@@ -1,8 +1,8 @@
-from parser import ParsePDF
+from .parser import ParsePDF
 import spacy
-from nlp_data.skills import skills
-from nlp_data.job_titles import job_titles
-from nlp_data.education import get_universities
+from .nlp_data.skills import skills
+from .nlp_data.job_titles import job_titles
+from .nlp_data.education import get_universities
 import re
 from fuzzywuzzy import fuzz, process
 
@@ -37,7 +37,7 @@ class NLPExtractor():
         return found_jobs
     
     def extract_education(self):
-        # Extracting all or any universities attended4
+        # Extracting all or any universities attended
         found_unis = []
         for uni in self.uni:
             pattern = r'\b' + uni + r'\b'

@@ -11,7 +11,7 @@ Resume Large Language Model:
 
 
 API:
-    ☐ Got fastapi backend started
+    ✔ Got fastapi backend started @done (11/20/2025, 12:57:32 PM)
     ☐ create necessary endpoints to run the model
         ☐ Post request to feed into text parser. 
         ☐ Get Request => Summary, ATS, ATS Summary, improvements

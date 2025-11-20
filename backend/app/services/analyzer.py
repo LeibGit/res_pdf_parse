@@ -62,7 +62,7 @@ class ResumeLLMAnalyzer():
         )
         return summary.choices[0].message.content
 
-    def ats_score(self)
+    def ats_score(self):
         text = self.full_text
         companies = self.companies
         jobs = self.titles

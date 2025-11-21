@@ -19,3 +19,9 @@ body {
   height: 300px;
   width: 300px;
 }
+
+.loader {
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}

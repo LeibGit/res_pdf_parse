@@ -29,7 +29,13 @@ async def analyze_resume_prompt(job_prompt: str = Form(...) , resume_file: Uploa
     ats_score = analyzer.ats_score()
     ats_description = analyzer.ats_description()
     recomendations = analyzer.resume_reccomendations()
-
+    
+    print("returning data", {
+        "summary": summary, 
+        "ats_score": ats_score,
+        "ats_description": ats_description,
+        "reccomendations": recomendations
+    })
     return {
         "summary": summary, 
         "ats_score": ats_score,

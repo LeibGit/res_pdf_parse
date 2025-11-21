@@ -3,7 +3,7 @@ from app.services.parser import ParsePDF
 from app.services.extractor import NLPExtractor
 from app.services.analyzer import ResumeLLMAnalyzer
 
-router = APIRouter()
+router = APIRouter(prefix="/resume")
 
 @router.post("/analyze")
 async def analyze_resume_prompt(job_prompt: str = Form(...) , resume_file: UploadFile = File(...)):

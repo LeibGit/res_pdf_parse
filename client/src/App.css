@@ -152,6 +152,34 @@ body {
   transition: width 1s ease-out;
 }
 
+
+
+.card h2 {
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 8px;
+}
+
+
+.improvements_card p {
+  margin-left: 1rem;
+  text-indent: -0.5rem;
+  line-height: 1.6;
+}
+
+.improvements_card p + p {
+  margin-top: 0.5rem;
+}
+
+.results_grid {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.card {
+  padding: 28px;
+}
+
+
 .ats_number {
   position: absolute;
   right: 10px;
@@ -206,4 +234,12 @@ body {
 .card li::marker {
   color: #c000ff;       /* purple bullets */
   font-size: 1rem;
+}
+
+.card {
+  text-align: left;
+}
+
+.card h2 {
+  text-align: center;
 }

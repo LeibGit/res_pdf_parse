@@ -155,7 +155,7 @@ function App() {
             Job description:
             <textarea
               className="job_prompt"
-              placeholder="Copy and paste the job description here..."
+              placeholder="Enter any Linkedin job description..."
               value={jobPrompt}
               onChange={(e) => setJobPrompt(e.target.value)}
               required

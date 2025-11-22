@@ -92,8 +92,11 @@ class ResumeLLMAnalyzer():
                             Rules:
                             - Return only a number not a string between 0 and 100, no text, no explanation, no whitespace or characters, just a nummber
                             - don't send back NaN
+                            - your explindation should be directly to the user, not in the third person. 
                             - Be unbiased and strictly data-driven.
                             - Ignore anything not explicitly listed in the resume.
+                            - deduct necessary points given the text passed as an argument if it is disorganized, misspelled, confusing or poorly structured. Deduct based
+                            on how bad the issues are
                         """
                     }, 
                     {
@@ -176,6 +179,8 @@ class ResumeLLMAnalyzer():
                             - Keep each suggestion to 1 or 2 sentences.
                             - No extra text, headers, or special characters.
                             - keep bullet points extremely short and don't number them. Stricly make a clear sentence or two. 
+                            - do not make an intro to your points, only send back the points
+                            - only send back the top 5 most important points
                             don't add any unecessary statements. 
                         """
                     }, 

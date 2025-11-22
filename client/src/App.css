@@ -32,7 +32,6 @@ body {
   50% { border-color: #c000ff }
 }
 
-
 .user_inputs {
   margin-top: 8rem;
   display: flex;
@@ -57,7 +56,7 @@ body {
   font-size: 14px;
   font-weight: 500;
   color: #e6eef6;
-  text-align: left;            /* prevents centering issues */
+  text-align: left;          
 }
 
 .prompt_label {
@@ -67,7 +66,6 @@ body {
   text-align: left;   
 }
 
-/* Textarea */
 .job_prompt {
   width: 100%;
   padding: 8px;
@@ -80,7 +78,7 @@ body {
   color: white;
 }
 
-/* File upload styling */
+
 .resume_file {
   border: 1px solid #ccc;
   padding: 8px;
@@ -96,7 +94,7 @@ body {
   background-color: #7e728150;
 }
 
-/* Loader centering fix */
+
 .loader {
   display: flex;
   flex-direction: column;
@@ -106,6 +104,106 @@ body {
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100vh;2
 
+}
+
+
+.results_grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+
+.card {
+  background-color: #cec6d032;
+  padding: 20px;
+  border-radius: 12px;
+  color: #e6eef6;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.report_title {
+  font-weight: 500;
+  font-size: 30px;
+}
+
+.ats_bar_container {
+  position: relative;
+  height: 15px;
+  background-color: #2b2b2baa;
+  border-radius: 15px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.ats_bar {
+  height: 100%;
+  background: linear-gradient(90deg, #cebdde2d, #927ba7d9);
+  width: 0; 
+  border-radius: 15px;
+  transition: width 1s ease-out;
+}
+
+.ats_number {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 300;
+  font-size: 12px;
+  color: #fff;
+}
+
+.ats_description {
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.card_text {
+  white-space: pre-line; 
+  line-height: 1.6;     
+  font-size: 14px;
+  color: #e6eef6;
+}
+
+
+/* Reset weird inherited text behavior */
+.card p, 
+.card ul, 
+.card li {
+  white-space: normal;
+  line-height: 1.6;
+  font-size: 14px;
+  color: #e6eef6;
+  text-align: left;
+}
+
+/* Make lists look clean */
+.card ul {
+  padding-left: 1.2rem;
+  margin: 0.5rem 0;
+}
+
+/* Make bullet spacing clean */
+.card li {
+  margin-bottom: 6px;
+}
+
+/* If your backend inserts "-" or "*" instead of real <li>, fix it */
+.card_text p {
+  margin-bottom: 10px;
+}
+
+/* Optional: style bullets to match your theme */
+.card li::marker {
+  color: #c000ff;       /* purple bullets */
+  font-size: 1rem;
 }

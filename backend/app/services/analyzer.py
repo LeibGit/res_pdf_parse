@@ -37,22 +37,20 @@ class ResumeLLMAnalyzer():
                 messages = [
                     {
                         "role": "system", 
-                        "content": f"""You are an analytical AI that summarizes resumes using only the information provided.
-                            Write a concise **3-sentence factual summary** describing this persons:
+                        "content": f"""
+                            You are an AI resume analyst. Summarize the candidate based ONLY on the data provided.  
+                            Output a **concise summary in 2 or 3 sentences** covering the following:
+
                             1. Key skills
-                            2. Relevant experience
+                            2. Relevant work experience (include roles & companies if listed)
                             3. Professional strengths
                             4. Education highlights
 
                             Rules:
-                            - **Use only information explicitly present in the resume.**
-                            - **No assumptions, guesses, or inferred details.**
-                            - Keep the tone objective, professional, and neutral.
-                            - if no companies are listed look for any obvious companies 
-                            the person worked at, analyze the text provided for it, else just ignore it.
-                            - keep it brief, use brevity. Max 3 sentences.
-                            - Just provide the summary, I don't need an intro to what you provided.
-                            - present the summary as "this resume"
+                            - Do NOT infer or guess information.
+                            - Keep tone objective and professional.
+                            - Only return the summary, no intro, headings, or special characters.
+                            - Present as a single paragraph, starting with "This resume:"
                         """
                     }, 
                     {
@@ -83,16 +81,19 @@ class ResumeLLMAnalyzer():
                 messages= [
                     {
                         "role": "system",
-                        "content": f"""Please provide an ATS score out of 100. 
-                            Base the score off the following:
-                                1. Skills of the applicant
-                                2. job exerience of the applicant
-                                3. the prestige or recognition of the companies they worked at
-                                4. {skills}, {companies}, {jobs}, {education} in relevence and prestige to {job_prompt} and company.
+                        "content": f"""
+                            You are an AI that calculates an ATS score 0 out of 100 for a resume against a specific job description.
+                            Evaluate the candidate based ONLY on:
+                            - Skills
+                            - Work experience (roles, companies)
+                            - Education
+                            - Alignment with the job description provided
+
                             Rules:
-                                1. be unbiased nor in favor or not
-                                2. make critical connections between the role description and the persons resume
-                                3. respond with a number and only a number, I dont want the description of why you chose it.
+                            - Return only a number not a string between 0 and 100, no text, no explanation, no whitespace or characters, just a nummber
+                            - don't send back NaN
+                            - Be unbiased and strictly data-driven.
+                            - Ignore anything not explicitly listed in the resume.
                         """
                     }, 
                     {
@@ -109,7 +110,6 @@ class ResumeLLMAnalyzer():
                 "error": "rate_limit", 
                 "messafe": str(e)
             }
-
     
     def ats_description(self):
         text = self.full_text
@@ -121,23 +121,21 @@ class ResumeLLMAnalyzer():
         job_prompt = self.prompt
 
         try:
-            ats_descript = self.client.chat.completions.create(
+            ats_description = self.client.chat.completions.create(
                 messages=[
                     {
                     "role": "system",
-                    "content": f"""### TASK:
-                        Provide:
-                        1. An ATS match score from 0–100  
-                        2. A short summary explaining why the score is what it is  
-                        3. The top strengths that match the job description  
-                        4. The key missing skills/experience/education or gaps that reduce the score  
-
-                        ### RULES:
-                        - Base all scoring ONLY on the job description below.
-                        - Do NOT infer skills that are not explicitly stated in the resume.
-                        - If the resume hints at something but does not directly state it, do NOT count it.
-                        - answer in 2-3 sentences
-                        - dont mention the actual ats score, that was already done with another prompt
+                    "content": f"""
+                        You are an AI that explains why a resume received a particular ATS score.
+                        Output a short explanation in 2 or 3 sentences including:
+                        1. Top strengths that match the job description
+                        2. Key missing skills, experience, or education gaps
+                        Rules:
+                        - Base ONLY on the job description and resume.
+                        - Do NOT infer unstated skills or experience.
+                        - Do NOT mention the numeric ATS score (already provided separately).
+                        - Provide a clean, readable paragraph with no bullet points or special characters.
+                       
                     """
                     },
                     {
@@ -147,7 +145,7 @@ class ResumeLLMAnalyzer():
                 ],
                 model=self.model
             )
-            return ats_descript.choices[0].message.content
+            return ats_description.choices[0].message.content
         
         except RateLimitError as e:
             return {
@@ -168,13 +166,17 @@ class ResumeLLMAnalyzer():
                 messages= [
                     {
                         "role": "system", 
-                        "content": f"""Provide a list of improvements that will meaningfully strengthen this resume.
-                        ### RULES:
-                        - Do NOT invent experience, job titles, or achievements.
-                        - Only suggest improvements based on what is already present.
-                        - Be specific (e.g., “Quantify achievements 
-                        - If you believe the user needs additional exerience in certian areas mention that
-                        - answer in 2-3 sentences.
+                        "content": f"""
+                            You are an AI resume advisor. Provide a list of actionable improvements to strengthen this resume.  
+                            Rules:
+                            - Suggest only based on information present in the resume.
+                            - Be specific, e.g., "Quantify achievements", "Gain experience in [specific area]"
+                            - Include any missing skills, certifications, or education that are relevant to the job description.                    
+                            - Do NOT invent job titles, companies, or achievements.
+                            - Keep each suggestion to 1 or 2 sentences.
+                            - No extra text, headers, or special characters.
+                            - keep bullet points extremely short and don't number them. Stricly make a clear sentence or two. 
+                            don't add any unecessary statements. 
                         """
                     }, 
                     {

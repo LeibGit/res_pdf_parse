@@ -89,17 +89,19 @@ function App() {
   if (loading) {
     return (
       <div className='loader'>
-        <p>Preparing your AI report... This loader should keep you entertained!!!</p>
-        <RingLoader />
+        <p>Preparing your AI report... Don't go anywhere!!!</p>
+        <RingLoader color="#cec6d0" />
       </div>
     )
   }
 
   return (
     <div>
-      <h1>Rez Ai</h1>
+      <h1 className="title">Rez Ai</h1>
+      <p className="tagline">Score, analyze, and improve your resume instantly.</p>
       <form className="user_inputs" onSubmit={handleSubmit}>
-        <label>
+      <div className="input_group">
+        <label className='file_label'>
           Upload your resume:
           <input
             className="resume_file"
@@ -108,19 +110,20 @@ function App() {
             required
           />
         </label>
-
-        <label>
-          Job description:
-          <textarea
-            className="job_prompt"
-            placeholder="Copy and paste the job description here..."
-            value={jobPrompt}
-            onChange={(e) => setJobPrompt(e.target.value)}
-            required
-          />
-        </label>
-
-        <button type="submit">Submit</button>
+        </div>
+        <div className="input_group">
+          <label className='prompt_label'>
+            Job description:
+            <textarea
+              className="job_prompt"
+              placeholder="Copy and paste the job description here..."
+              value={jobPrompt}
+              onChange={(e) => setJobPrompt(e.target.value)}
+              required
+            />
+          </label>
+        </div>
+        <button type="submit" className='submit'>Analyze Resume</button>
       </form>
     </div>
   );

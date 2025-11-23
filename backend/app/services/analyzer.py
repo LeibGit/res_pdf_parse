@@ -94,6 +94,7 @@ class ResumeLLMAnalyzer():
                             - don't send back NaN
                             - your explindation should be directly to the user, not in the third person. 
                             - Be unbiased and strictly data-driven.
+                            - don't ever respond with anything that would be registered as NaN in react frontend.
                             - Ignore anything not explicitly listed in the resume.
                             - deduct necessary points given the text passed as an argument if it is disorganized, misspelled, confusing or poorly structured. Deduct based
                             on how bad the issues are
@@ -156,7 +157,7 @@ class ResumeLLMAnalyzer():
                 "messafe": str(e)
             }
     
-    def resume_reccomendations(self):
+    def resume_recomendations(self):
         text = self.full_text
         skills =self.skills
         jobs = self.titles
@@ -165,7 +166,7 @@ class ResumeLLMAnalyzer():
         job_prompt = self.prompt
         
         try:
-            reccomendations = self.client.chat.completions.create(
+            recomendations = self.client.chat.completions.create(
                 messages= [
                     {
                         "role": "system", 
@@ -191,7 +192,7 @@ class ResumeLLMAnalyzer():
                 ], 
                 model=self.model
             )
-            return reccomendations.choices[0].message.content 
+            return recomendations.choices[0].message.content 
     
         except RateLimitError as e:
             return {

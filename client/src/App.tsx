@@ -13,7 +13,6 @@ function App() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("🚀 Form submitted");
     
     setLoading(true);
     setError(null);
@@ -24,18 +23,18 @@ function App() {
       formData.append("job_prompt", jobPrompt);
       formData.append("resume_file", file);
 
-      console.log("📤 Sending request to:", `${endpoint}/analyze`);
+      if (file.type !== 'application/pdf') {
+      setError('Only PDF files are allowed.');
+      return;
+    }
 
       const res = await fetch(`${endpoint}/analyze`, {
         method: 'POST',
         body: formData,
       });
 
-      console.log("📥 Response status:", res.status);
-
       if (!res.ok) {
         const text = await res.text();
-        console.log("❌ Backend error:", text);
         throw new Error(`Network response failed: ${res.status} ${text}`);
       }
 
@@ -107,7 +106,7 @@ function App() {
             <div className="card improvements_card">
               <h2>Suggested Improvements</h2>
               <div className="card_text">
-                {data.reccomendations}
+                {data.recomendations}
               </div>
             </div>
 

@@ -243,3 +243,35 @@ body {
 .card h2 {
   text-align: center;
 }
+
+
+@media (max-width: 768px) {
+  .results_grid {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .ats_card {
+    transform: none;   /* Don't pop out too much on mobile */
+    box-shadow: 0 8px 18px rgba(0,0,0,0.28);
+  }
+
+  .ats_number {
+    right: 8px;
+    top: -20px;
+  }
+
+  .card {
+    padding: 1.2rem;
+  }
+
+  .card h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .card p {
+    font-size: 0.9rem;
+  }
+}

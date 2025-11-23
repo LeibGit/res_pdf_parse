@@ -1,7 +1,11 @@
 import pandas as pd
 import re
+import os
+from dotenv import load_dotenv
 
-csv_path = r"C:\Users\leibn\Downloads\us-colleges-and-universities.csv\us-colleges-and-universities.csv"
+load_dotenv()
+
+csv_path = os.getenv("COLLEGE_DOWNLOAD")
 # let pandas handle quoted strings
 df = pd.read_csv(csv_path, quotechar='"', engine='python', sep=None)
 print(df.head())

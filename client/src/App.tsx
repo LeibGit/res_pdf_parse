@@ -2,16 +2,23 @@ import { useState } from 'react'
 import { RingLoader } from 'react-spinners';
 import './App.css'
 
+interface ResumeData {
+  summary: string;
+  ats_score: number;
+  ats_description: string;
+  recomendations: string[];
+}
+
 function App() {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState(null); 
-  const [file, setFile] = useState(null);
-  const [error, setError] = useState(null);
+  const [data, setData] = useState<ResumeData | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [jobPrompt, setJobPrompt] = useState("");
 
-  const endpoint = "http://127.0.0.1:8000/resume"
+  const endpoint = "http://127.0.0.1:8000/resume";
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     
     setLoading(true);
@@ -19,14 +26,19 @@ function App() {
     setData(null);
 
     try {
+      if (!file) {
+        setError("Please upload a resume file.");
+        return;
+      }
+
+      if (file.type !== 'application/pdf') {
+        setError('Only PDF files are allowed.');
+        return;
+      }
+
       const formData = new FormData();
       formData.append("job_prompt", jobPrompt);
       formData.append("resume_file", file);
-
-      if (file.type !== 'application/pdf') {
-      setError('Only PDF files are allowed.');
-      return;
-    }
 
       const res = await fetch(`${endpoint}/analyze`, {
         method: 'POST',
@@ -39,28 +51,23 @@ function App() {
       }
 
       const json = await res.json();
-      console.log("✅ Received data:", json);
-      console.log("✅ Data type:", typeof json);
-      console.log("✅ ATS Score:", json.ats_score);
-      
-      // Ensure ats_score is a number
-      if (typeof json.ats_score === 'string') {
+
+      // Normalize ats_score
+      if (typeof json.ats_score === "string") {
         json.ats_score = parseInt(json.ats_score);
       }
-      
-      setData(json);
-      console.log("✅ Data state set successfully!");
 
-    } catch (error) {
-      console.error("❌ Error in handleSubmit:", error);
-      setError(error.message); 
+      setData(json);
+
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      setError(message);
     } finally {
-      console.log("🏁 Setting loading to false");
       setLoading(false);
     }
   };
 
-  
+  // -------------------------- ERROR PAGE --------------------------
   if (error) {
     return (
       <div className="error">
@@ -74,13 +81,14 @@ function App() {
     );
   }
 
+  // -------------------------- RESULTS PAGE --------------------------
   if (data) {
-    console.log("🎨 Rendering results page with data:", data);
-    const hasError = data.summary?.error || data.ats_score?.error;
-    
+    const hasError = (data as any)?.summary?.error || (data as any)?.ats_score?.error;
+
     return (
       <div className="results">
         <h1 className='report_title'>AI Resume Report</h1>
+
         {hasError ? (
           <div>
             <p>Oops! There was an error generating your report:</p>
@@ -88,6 +96,7 @@ function App() {
           </div>
         ) : (
           <div className="results_grid">
+
             <div className="card summary_card">
               <h2>Resume Summary</h2>
               <p className="card_text">{data.summary}</p>
@@ -98,7 +107,6 @@ function App() {
               <div className="ats_bar_container">
                 <div className="ats_bar" style={{ width: `${data.ats_score}%` }}></div>
                 <span className="ats_number">{data.ats_score}</span>
-                console.log(json.data.ats_score)
               </div>
               <p className="card_text ats_description">{data.ats_description}</p>
             </div>
@@ -112,6 +120,7 @@ function App() {
 
           </div>
         )}
+
         <button onClick={() => {
           setData(null);
           setFile(null);
@@ -121,8 +130,8 @@ function App() {
     );
   }
 
+  // -------------------------- LOADING PAGE --------------------------
   if (loading) {
-    console.log("⏳ Showing loading screen");
     return (
       <div className='loader'>
         <p>Preparing your AI report... Don't go anywhere!!!</p>
@@ -131,11 +140,12 @@ function App() {
     )
   }
 
-  console.log("📝 Showing form");
+  // -------------------------- FORM --------------------------
   return (
     <div>
       <h1 className="title">Rez Ai</h1>
       <p className="tagline">Score, analyze, and improve your resume instantly.</p>
+
       <form className="user_inputs" onSubmit={handleSubmit}>
         <div className="input_group">
           <label className='file_label'>
@@ -144,11 +154,16 @@ function App() {
               className="resume_file"
               type="file"
               accept=".pdf"
-              onChange={(e) => setFile(e.target.files[0])}
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  setFile(e.target.files[0]);
+                }
+              }}
               required
             />
           </label>
         </div>
+
         <div className="input_group">
           <label className='prompt_label'>
             Job description:
@@ -161,6 +176,7 @@ function App() {
             />
           </label>
         </div>
+
         <button type="submit" className='submit'>Analyze Resume</button>
       </form>
     </div>

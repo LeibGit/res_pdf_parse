@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import { RingLoader } from 'react-spinners';
-import './App.css'
+import './App.css';
 
-interface ResumeData {
+interface ResumeResponse {
   summary: string;
   ats_score: number;
   ats_description: string;
@@ -10,39 +10,38 @@ interface ResumeData {
 }
 
 function App() {
+  const [file, setFile] = useState<File | null>(null);  
+  const [error, setError] = useState<string | null>(null); 
   const [data, setData] = useState<ResumeResponse | null>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [jobPrompt, setJobPrompt] = useState("");
 
+  const endpoint = "http://127.0.0.1:8000";
 
-  const endpoint = "http://127.0.0.1:8000/resume";
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();  // TS now knows what 'e' is
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    
-    setLoading(true);
-    setError(null);
-    setData(null);
+    if (!file) {
+      setError("Please upload a PDF.");
+      return;
+    }
+
+    if (file.type !== "application/pdf") {
+      setError("Only PDF files are allowed.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("job_prompt", jobPrompt);
+    formData.append("resume_file", file);
 
     try {
-      const files = e.target.files;
-      if (!files || files.length === 0) return;
-      const file = files[0];
+      setLoading(true);
+      setError(null);
+      setData(null);
 
-
-      if (file.type !== 'application/pdf') {
-        setError('Only PDF files are allowed.');
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("job_prompt", jobPrompt);
-      formData.append("resume_file", file);
-
-      const res = await fetch(`${endpoint}/analyze`, {
-        method: 'POST',
+      const res = await fetch(`${endpoint}/resume/analyze`, {
+        method: "POST",
         body: formData,
       });
 
@@ -51,19 +50,17 @@ function App() {
         throw new Error(`Network response failed: ${res.status} ${text}`);
       }
 
-      const json = await res.json();
+      const json = await res.json() as ResumeResponse; // TS knows type
 
-      // Normalize ats_score
+      // Ensure ats_score is a number
       if (typeof json.ats_score === "string") {
         json.ats_score = parseInt(json.ats_score);
       }
 
       setData(json);
-
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.log(error.message);
-      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -90,7 +87,6 @@ function App() {
     return (
       <div className="results">
         <h1 className='report_title'>AI Resume Report</h1>
-
         {hasError ? (
           <div>
             <p>Oops! There was an error generating your report:</p>

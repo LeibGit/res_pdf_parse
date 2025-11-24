@@ -10,11 +10,12 @@ interface ResumeData {
 }
 
 function App() {
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<ResumeData | null>(null);
+  const [data, setData] = useState<ResumeResponse | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const [jobPrompt, setJobPrompt] = useState("");
+
 
   const endpoint = "http://127.0.0.1:8000/resume";
 
@@ -26,10 +27,10 @@ function App() {
     setData(null);
 
     try {
-      if (!file) {
-        setError("Please upload a resume file.");
-        return;
-      }
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
+      const file = files[0];
+
 
       if (file.type !== 'application/pdf') {
         setError('Only PDF files are allowed.');
@@ -59,9 +60,10 @@ function App() {
 
       setData(json);
 
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Unknown error";
-      setError(message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
     } finally {
       setLoading(false);
     }

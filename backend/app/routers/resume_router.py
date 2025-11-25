@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
-from app.services.parser import ParsePDF
-from app.services.extractor import NLPExtractor
-from app.services.analyzer import ResumeLLMAnalyzer
+from services.parser import ParsePDF
+from services.extractor import NLPExtractor
+from services.analyzer import ResumeLLMAnalyzer
 
 router = APIRouter(prefix="/resume")
 

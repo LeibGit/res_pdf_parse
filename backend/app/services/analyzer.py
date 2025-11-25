@@ -81,28 +81,48 @@ class ResumeLLMAnalyzer():
                 messages= [
                     {
                         "role": "system",
-                        "content": f"""
-                            You are an AI that calculates an ATS score 0 out of 100 for a resume against a specific job description.
-                            Evaluate the candidate based ONLY on:
-                            - Skills
-                            - Work experience (roles, companies)
-                            - Education
-                            - Alignment with the job description provided
+                        "content": """
+                    You are an AI that outputs a STRICT ATS score between 0 and 100.
 
-                            Rules:
-                            - Return only a number not a string between 0 and 100, no text, no explanation, no whitespace or characters, just a nummber
-                            - don't send back NaN
-                            - your explindation should be directly to the user, not in the third person. 
-                            - Be unbiased and strictly data-driven.
-                            - don't ever respond with anything that would be registered as NaN in react frontend.
-                            - Ignore anything not explicitly listed in the resume.
-                            - deduct necessary points given the text passed as an argument if it is disorganized, misspelled, confusing or poorly structured. Deduct based
-                            on how bad the issues are
-                        """
-                    }, 
+                    OUTPUT RULES:
+                    - Output ONLY an integer between 0 and 100.
+                    - No decimals.
+                    - No text.
+                    - No symbols.
+                    - No words.
+                    - No explanation.
+                    - No surrounding quotes.
+                    - No whitespace before or after.
+                    - Never output NaN.
+
+                    SCORING CRITERIA:
+                    Score based ONLY on:
+                    - Skills match
+                    - Job titles match
+                    - Companies/work experience relevance
+                    - Education relevance
+                    - Alignment with job description
+                    - Quality of resume text (deduct for disorganization, spelling issues, etc.)
+
+                    If unsure, return your **best numerical estimate** — but ALWAYS return a number.
+                    """
+                    },
                     {
                         "role": "user",
-                        "content": f"Skills: {skills} Job Titles: {jobs} Companies: {companies} Text: {text} education: {education} Job_description: {job_prompt}"
+                        "content": f"""
+                    RESUME DATA:
+                    Skills: {skills}
+                    Job Titles: {jobs}
+                    Companies: {companies}
+                    Education: {education}
+                    Text: {text}
+
+                    JOB DESCRIPTION:
+                    {job_prompt}
+
+                    IMPORTANT:
+                    Return ONLY the number.
+                    """
                     }
                 ], 
                 model=self.model 
@@ -130,16 +150,14 @@ class ResumeLLMAnalyzer():
                     {
                     "role": "system",
                     "content": f"""
-                        You are an AI that explains why a resume received a particular ATS score.
-                        Output a short explanation in 2 or 3 sentences including:
-                        1. Top strengths that match the job description
-                        2. Key missing skills, experience, or education gaps
-                        Rules:
-                        - Base ONLY on the job description and resume.
-                        - Do NOT infer unstated skills or experience.
-                        - Do NOT mention the numeric ATS score (already provided separately).
-                        - Provide a clean, readable paragraph with no bullet points or special characters.
-                       
+                        You explain WHY a resume received its ATS score.
+                        Output 2–3 clear sentences.
+
+                        RULES:
+                        - No bullet points
+                        - No score reference
+                        - No invented information
+                        - No special formatting                            
                     """
                     },
                     {
@@ -170,19 +188,14 @@ class ResumeLLMAnalyzer():
                 messages= [
                     {
                         "role": "system", 
-                        "content": f"""
-                            You are an AI resume advisor. Provide a list of actionable improvements to strengthen this resume.  
-                            Rules:
-                            - Suggest only based on information present in the resume.
-                            - Be specific, e.g., "Quantify achievements", "Gain experience in [specific area]"
-                            - Include any missing skills, certifications, or education that are relevant to the job description.                    
-                            - Do NOT invent job titles, companies, or achievements.
-                            - Keep each suggestion to 1 or 2 sentences.
-                            - No extra text, headers, or special characters.
-                            - keep bullet points extremely short and don't number them. Stricly make a clear sentence or two. 
-                            - do not make an intro to your points, only send back the points
-                            - only send back the top 5 most important points
-                            don't add any unecessary statements. 
+                        "content": """
+                        You output exactly 5 resume improvement suggestions.
+
+                        RULES:
+                        - Each suggestion is 1–2 sentences.
+                        - No numbers, no bullet symbols.
+                        - No intro, no summary.
+                        - Only return the 5 suggestions as 5 separate paragraphs.
                         """
                     }, 
                     {

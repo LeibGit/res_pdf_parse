@@ -298,6 +298,10 @@ html, body {
     margin-bottom: 0.8rem;
   }
 
+  .loader_text {
+    font-size: 10px;
+  }
+
   .card p {
     font-size: 0.9rem;
   }

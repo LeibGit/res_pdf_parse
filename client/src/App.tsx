@@ -126,7 +126,7 @@ function App() {
   if (loading) {
     return (
       <div className='loader'>
-        <p>Preparing your AI report... Don't go anywhere!!!</p>
+        <p className='loader_text'>Preparing your AI report... Don't go anywhere!!!</p>
         <RingLoader color="#cec6d0" />
       </div>
     )

@@ -112,22 +112,6 @@ function App() {
               )}
             </div>
           </div>
-
-          <div className="card education_card">
-            <h2>Education</h2>
-            <div className="card_text">
-              {data.education && data.education.length > 0 ? (
-                <ul>
-                  {data.education.map((edu, index) => (
-                    <li key={index}>{edu}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No education information found in resume.</p>
-              )}
-            </div>
-          </div>
-
         </div>
 
         <button onClick={() => {

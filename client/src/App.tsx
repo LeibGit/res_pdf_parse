@@ -1,60 +1,72 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import { RingLoader } from 'react-spinners';
-import './App.css'
+import './App.css';
+
+interface ResumeResponse {
+  summary: string;
+  ats_score: number;
+  ats_description: string;
+  recomendations: string[];
+  education: string[];
+}
 
 function App() {
+  const [file, setFile] = useState<File | null>(null);  
+  const [error, setError] = useState<string | null>(null); 
+  const [data, setData] = useState<ResumeResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState(null); 
-  const [file, setFile] = useState(null);
-  const [error, setError] = useState(null);
   const [jobPrompt, setJobPrompt] = useState("");
 
-  const endpoint = "https://res-pdf-parse.onrender.com"
+  const endpoint = "https://res-pdf-parse.onrender.com";
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();  // TS now knows what 'e' is
+
     if (!file) {
-      setError("Please upload a PDF file");
+      setError("Please upload a PDF.");
       return;
     }
-    setLoading(true);
-    setError(null);
-    setData(null);
+
+    if (file.type !== "application/pdf") {
+      setError("Only PDF files are allowed.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("job_prompt", jobPrompt);
+    formData.append("resume_file", file);
 
     try {
-      const formData = new FormData();
-      formData.append("job_prompt", jobPrompt);
-      formData.append("resume_file", file);
+      setLoading(true);
+      setError(null);
+      setData(null);
 
       const res = await fetch(`${endpoint}/resume/analyze`, {
-        method: 'POST',
+        method: "POST",
         body: formData,
       });
-
 
       if (!res.ok) {
         throw new Error(`Network response failed: ${res.status}`);
       }
 
-      const json = await res.json();
+      const json = await res.json() as ResumeResponse; // TS knows type
 
-      if (typeof json.ats_score === 'string') {
+      // Ensure ats_score is a number
+      if (typeof json.ats_score === "string") {
         json.ats_score = parseInt(json.ats_score);
       }
-      
+
       setData(json);
-
-
-    } catch (error) {
-      console.error(error);
-      setError(error.message); 
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      setError(message);
     } finally {
       setLoading(false);
     }
   };
 
-  
+  // -------------------------- ERROR PAGE --------------------------
   if (error) {
     return (
       <div className="error">
@@ -68,9 +80,11 @@ function App() {
     );
   }
 
+  // -------------------------- RESULTS PAGE -------------------------- 
   if (data) {
-    const hasError = data.summary?.error || data.ats_score?.error;
-    
+    const hasError = (typeof data.summary === 'object' && 'error' in data.summary) || 
+                     (typeof data.ats_score === 'object' && 'error' in data.ats_score);
+
     return (
       <div className="results">
         <h1 className='report_title'>AI Resume Report</h1>
@@ -81,6 +95,7 @@ function App() {
           </div>
         ) : (
           <div className="results_grid">
+
             <div className="card summary_card">
               <h2>Resume Summary</h2>
               <p className="card_text">{data.summary}</p>
@@ -91,7 +106,6 @@ function App() {
               <div className="ats_bar_container">
                 <div className="ats_bar" style={{ width: `${data.ats_score}%` }}></div>
                 <span className="ats_number">{data.ats_score}</span>
-                console.log(json.data.ats_score)
               </div>
               <p className="card_text ats_description">{data.ats_description}</p>
             </div>
@@ -103,8 +117,26 @@ function App() {
               </div>
             </div>
 
+            <div className="card education_card">
+              <h2>Education</h2>
+              <div className="card_text">
+                {data.education && data.education.length > 0 ? (
+                  <ul style={{ listStyle: 'none', padding: 0 }}>
+                    {data.education.map((edu, index) => (
+                      <li key={index} style={{ marginBottom: '0.5rem' }}>
+                        {edu}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No education information found in resume.</p>
+                )}
+              </div>
+            </div>
+
           </div>
         )}
+
         <button onClick={() => {
           setData(null);
           setFile(null);
@@ -114,8 +146,8 @@ function App() {
     );
   }
 
+  // -------------------------- LOADING PAGE --------------------------
   if (loading) {
-    console.log("⏳ Showing loading screen");
     return (
       <div className='loader'>
         <p>Preparing your AI report... Don't go anywhere!!!</p>
@@ -124,11 +156,12 @@ function App() {
     )
   }
 
-  console.log("📝 Showing form");
+  // -------------------------- FORM --------------------------
   return (
     <div>
       <h1 className="title">Rez Ai</h1>
       <p className="tagline">Score, analyze, and improve your resume instantly.</p>
+
       <form className="user_inputs" onSubmit={handleSubmit}>
         <div className="input_group">
           <label className='file_label'>
@@ -137,11 +170,16 @@ function App() {
               className="resume_file"
               type="file"
               accept=".pdf"
-              onChange={(e) => setFile(e.target.files[0])}
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  setFile(e.target.files[0]);
+                }
+              }}
               required
             />
           </label>
         </div>
+
         <div className="input_group">
           <label className='prompt_label'>
             Job description:
@@ -154,6 +192,7 @@ function App() {
             />
           </label>
         </div>
+
         <button type="submit" className='submit'>Analyze Resume</button>
       </form>
     </div>

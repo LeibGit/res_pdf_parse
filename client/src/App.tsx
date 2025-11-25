@@ -7,6 +7,7 @@ interface ResumeResponse {
   ats_score: number;
   ats_description: string;
   recomendations: string[];
+  education: string[];
 }
 
 function App() {

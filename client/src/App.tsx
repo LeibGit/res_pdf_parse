@@ -20,7 +20,7 @@ function App() {
   const endpoint = "https://res-pdf-parse.onrender.com";
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();  // TS now knows what 'e' is
+    e.preventDefault();
 
     if (!file) {
       setError("Please upload a PDF.");
@@ -50,9 +50,8 @@ function App() {
         throw new Error(`Network response failed: ${res.status}`);
       }
 
-      const json = await res.json() as ResumeResponse; // TS knows type
+      const json = await res.json() as ResumeResponse;
 
-      // Ensure ats_score is a number
       if (typeof json.ats_score === "string") {
         json.ats_score = parseInt(json.ats_score);
       }
@@ -66,7 +65,6 @@ function App() {
     }
   };
 
-  // -------------------------- ERROR PAGE --------------------------
   if (error) {
     return (
       <div className="error">
@@ -80,62 +78,57 @@ function App() {
     );
   }
 
-  // -------------------------- RESULTS PAGE -------------------------- 
   if (data) {
-    const hasError = (typeof data.summary === 'object' && 'error' in data.summary) || 
-                     (typeof data.ats_score === 'object' && 'error' in data.ats_score);
-
     return (
       <div className="results">
         <h1 className='report_title'>AI Resume Report</h1>
-        {hasError ? (
-          <div>
-            <p>Oops! There was an error generating your report:</p>
-            <pre>{JSON.stringify(data, null, 2)}</pre>
+        <div className="results_grid">
+
+          <div className="card summary_card">
+            <h2>Resume Summary</h2>
+            <p className="card_text">{data.summary}</p>
           </div>
-        ) : (
-          <div className="results_grid">
 
-            <div className="card summary_card">
-              <h2>Resume Summary</h2>
-              <p className="card_text">{data.summary}</p>
+          <div className="card ats_card">
+            <h2>ATS Score</h2>
+            <div className="ats_bar_container">
+              <div className="ats_bar" style={{ width: `${data.ats_score}%` }}></div>
+              <span className="ats_number">{data.ats_score}</span>
             </div>
-
-            <div className="card ats_card">
-              <h2>ATS Score</h2>
-              <div className="ats_bar_container">
-                <div className="ats_bar" style={{ width: `${data.ats_score}%` }}></div>
-                <span className="ats_number">{data.ats_score}</span>
-              </div>
-              <p className="card_text ats_description">{data.ats_description}</p>
-            </div>
-
-            <div className="card improvements_card">
-              <h2>Suggested Improvements</h2>
-              <div className="card_text">
-                {data.recomendations}
-              </div>
-            </div>
-
-            <div className="card education_card">
-              <h2>Education</h2>
-              <div className="card_text">
-                {data.education && data.education.length > 0 ? (
-                  <ul style={{ listStyle: 'none', padding: 0 }}>
-                    {data.education.map((edu, index) => (
-                      <li key={index} style={{ marginBottom: '0.5rem' }}>
-                        {edu}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No education information found in resume.</p>
-                )}
-              </div>
-            </div>
-
+            <p className="card_text ats_description">{data.ats_description}</p>
           </div>
-        )}
+
+          <div className="card improvements_card">
+            <h2>Suggested Improvements</h2>
+            <div className="card_text">
+              {Array.isArray(data.recomendations) ? (
+                <ul>
+                  {data.recomendations.map((rec, index) => (
+                    <li key={index}>{rec}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p>{data.recomendations}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="card education_card">
+            <h2>Education</h2>
+            <div className="card_text">
+              {data.education && data.education.length > 0 ? (
+                <ul>
+                  {data.education.map((edu, index) => (
+                    <li key={index}>{edu}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No education information found in resume.</p>
+              )}
+            </div>
+          </div>
+
+        </div>
 
         <button onClick={() => {
           setData(null);
@@ -146,7 +139,6 @@ function App() {
     );
   }
 
-  // -------------------------- LOADING PAGE --------------------------
   if (loading) {
     return (
       <div className='loader'>
@@ -156,7 +148,6 @@ function App() {
     )
   }
 
-  // -------------------------- FORM --------------------------
   return (
     <div>
       <h1 className="title">Rez Ai</h1>

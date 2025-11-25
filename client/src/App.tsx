@@ -13,8 +13,11 @@ function App() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("🚀 Form submitted");
     
+    if (!file) {
+      setError("Please upload a PDF file");
+      return;
+    }
     setLoading(true);
     setError(null);
     setData(null);
@@ -96,7 +99,7 @@ function App() {
             <div className="card improvements_card">
               <h2>Suggested Improvements</h2>
               <div className="card_text">
-                {data.reccomendations}
+                {data.recomendations}
               </div>
             </div>
 

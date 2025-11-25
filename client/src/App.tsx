@@ -17,7 +17,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [jobPrompt, setJobPrompt] = useState("");
 
-  const endpoint = "https://res-pdf-parse.vercel.app";
+  const endpoint = "https://res-pdf-parse.onrender.com/";
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();  // TS now knows what 'e' is

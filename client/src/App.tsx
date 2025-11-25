@@ -47,7 +47,6 @@ function App() {
       });
 
       if (!res.ok) {
-        const text = await res.text();
         throw new Error(`Network response failed: ${res.status}`);
       }
 

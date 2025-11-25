@@ -5,7 +5,6 @@ from .nlp_data.job_titles import job_titles
 from .nlp_data.education import get_universities
 import re
 
-# Load spaCy model once at module level (shared across instances)
 nlp = spacy.load("en_core_web_sm")
 
 class NLPExtractor():

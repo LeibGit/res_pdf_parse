@@ -37,7 +37,8 @@ async def analyze_resume_prompt(job_prompt: str = Form(...), resume_file: Upload
             "summary": summary, 
             "ats_score": ats_score, 
             "ats_description": ats_description, 
-            "recomendations": recomendations
+            "recomendations": recomendations,
+            "education": education
         }
     except ValueError as e:
         # Handle file type errors

@@ -16,7 +16,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [jobPrompt, setJobPrompt] = useState("");
 
-  const endpoint = "http://127.0.0.1:8000";
+  const endpoint = "https://res-pdf-parse.vercel.app";
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();  // TS now knows what 'e' is
@@ -80,9 +80,10 @@ function App() {
     );
   }
 
-  // -------------------------- RESULTS PAGE --------------------------
+  // -------------------------- RESULTS PAGE -------------------------- 
   if (data) {
-    const hasError = (data as any)?.summary?.error || (data as any)?.ats_score?.error;
+    const hasError = (typeof data.summary === 'object' && 'error' in data.summary) || 
+                     (typeof data.ats_score === 'object' && 'error' in data.ats_score);
 
     return (
       <div className="results">
@@ -113,6 +114,23 @@ function App() {
               <h2>Suggested Improvements</h2>
               <div className="card_text">
                 {data.recomendations}
+              </div>
+            </div>
+
+            <div className="card education_card">
+              <h2>Education</h2>
+              <div className="card_text">
+                {data.education && data.education.length > 0 ? (
+                  <ul style={{ listStyle: 'none', padding: 0 }}>
+                    {data.education.map((edu, index) => (
+                      <li key={index} style={{ marginBottom: '0.5rem' }}>
+                        {edu}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No education information found in resume.</p>
+                )}
               </div>
             </div>
 

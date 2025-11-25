@@ -48,7 +48,7 @@ function App() {
 
       if (!res.ok) {
         const text = await res.text();
-        throw new Error(`Network response failed: ${res.status} ${text}`);
+        throw new Error(`Network response failed: ${res.status}`);
       }
 
       const json = await res.json() as ResumeResponse; // TS knows type

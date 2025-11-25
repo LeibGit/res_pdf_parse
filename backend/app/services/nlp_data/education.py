@@ -47,14 +47,3 @@ def get_universities():
         pass
     
     return list_of_universities
-"""
-    for site in uni_sites:
-        match = re.search(r"www\.([^.]+)\.", site)
-        if match == None:
-            continue
-        else:
-            list_of_universities.append(match.group(1))
-"""
-
-if __name__=="__main__":
-    print(get_universities())

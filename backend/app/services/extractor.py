@@ -4,16 +4,16 @@ from .nlp_data.skills import skills
 from .nlp_data.job_titles import job_titles
 from .nlp_data.education import get_universities
 import re
-from fuzzywuzzy import fuzz, process
 
+# Load spaCy model once at module level (shared across instances)
 nlp = spacy.load("en_core_web_sm")
 
 class NLPExtractor():
     def __init__(self, resume):
-        # Load spaCy English model
         self.resume = resume
         self.resume_clean = re.sub(r"\s+", " ", resume.lower())
-        self.nlp = spacy.load("en_core_web_sm")
+        # Use the global nlp instance instead of loading again
+        self.nlp = nlp
         self.skills = [s.lower() for s in skills]
         self.job_titles = [j.lower() for j in job_titles]
         self.uni = [u.lower() for u in get_universities()]
@@ -49,9 +49,8 @@ class NLPExtractor():
         found_companies = []
         company_suffixes = ["inc", "llc", "corp", "ltd", "co", "company", "firm", "agency", "partnership"]
         cleaned_text = re.sub(r'\s+', ' ', self.resume)
-        doc = nlp(cleaned_text)
+        doc = self.nlp(cleaned_text)
         for ent in doc.ents:
-            print(ent.text, ent.label_)
             if ent.label_ == "ORG":
                 name = ent.text.strip()
                 if name in found_companies:

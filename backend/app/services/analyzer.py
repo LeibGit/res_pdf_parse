@@ -65,7 +65,7 @@ class ResumeLLMAnalyzer():
         except RateLimitError as e:
             return {
                 "error": "rate_limit", 
-                "messafe": str(e)
+                "message": str(e)
             }
 
     def ats_score(self):
@@ -112,7 +112,7 @@ class ResumeLLMAnalyzer():
         except RateLimitError as e:
             return {
                 "error": "rate_limit", 
-                "messafe": str(e)
+                "message": str(e)
             }
     
     def ats_description(self):
@@ -154,7 +154,7 @@ class ResumeLLMAnalyzer():
         except RateLimitError as e:
             return {
                 "error": "rate_limit", 
-                "messafe": str(e)
+                "message": str(e)
             }
     
     def resume_recomendations(self):
@@ -197,5 +197,5 @@ class ResumeLLMAnalyzer():
         except RateLimitError as e:
             return {
                 "error": "rate_limit", 
-                "messafe": str(e)
+                "message": str(e)
             }

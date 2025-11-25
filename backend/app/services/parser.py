@@ -1,5 +1,6 @@
 from pypdf import PdfReader
-from docx import Document
+from fastapi import UploadFile
+import io
 
 class ParsePDF():
     def __init__(self, file: str):

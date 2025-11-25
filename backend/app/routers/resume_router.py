@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Form
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from app.services.parser import ParsePDF
 from app.services.extractor import NLPExtractor
 from app.services.analyzer import ResumeLLMAnalyzer
@@ -6,40 +6,42 @@ from app.services.analyzer import ResumeLLMAnalyzer
 router = APIRouter(prefix="/resume")
 
 @router.post("/analyze")
-async def analyze_resume_prompt(job_prompt: str = Form(...) , resume_file: UploadFile = File(...)):
-    parsed_resume = ParsePDF.parse_pdf(resume_file)
-    extractor = NLPExtractor(resume=parsed_resume)
+async def analyze_resume_prompt(job_prompt: str = Form(...), resume_file: UploadFile = File(...)):
+    try:
+        # Parse PDF from uploaded file
+        parsed_resume = ParsePDF.parse_pdf(resume_file)
+        
+        # Extract structured data
+        extractor = NLPExtractor(resume=parsed_resume)
+        skills = extractor.extract_skills()
+        titles = extractor.extract_job_titles()
+        companies = extractor.extract_companies()
+        education = extractor.extract_education()
 
-    skills = extractor.extract_skills()
-    titles = extractor.extract_job_titles()
-    companies = extractor.extract_companies()
-    education = extractor.extract_education()
+        # Analyze with LLM
+        analyzer = ResumeLLMAnalyzer(
+            full_text=parsed_resume, 
+            skills=skills, 
+            titles=titles, 
+            companies=companies, 
+            education=education,
+            prompt=job_prompt
+        )
 
-
-    analyzer = ResumeLLMAnalyzer(
-        full_text= parsed_resume, 
-        skills= skills, 
-        titles= titles, 
-        companies= companies, 
-        education= education,
-        prompt= job_prompt
-)
-
-    summary = analyzer.resume_summary()
-    ats_score = analyzer.ats_score()
-    ats_description = analyzer.ats_description()
-    recomendations = analyzer.resume_recomendations()
-    
-    print("returning data", {
-        "summary": summary, 
-        "ats_score": ats_score,
-        "ats_description": ats_description,
-        "recomendations": recomendations
-    })
-
-    return {
-        "summary": summary, 
-        "ats_score": ats_score, 
-        "ats_description": ats_description, 
-        "recomendations": recomendations
-    }
+        summary = analyzer.resume_summary()
+        ats_score = analyzer.ats_score()
+        ats_description = analyzer.ats_description()
+        recomendations = analyzer.resume_recomendations()
+        
+        return {
+            "summary": summary, 
+            "ats_score": ats_score, 
+            "ats_description": ats_description, 
+            "recomendations": recomendations
+        }
+    except ValueError as e:
+        # Handle file type errors
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        # Handle any other errors
+        raise HTTPException(status_code=500, detail=f"Error processing resume: {str(e)}")

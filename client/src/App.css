@@ -290,17 +290,15 @@ html, body {
     grid-template-columns: 1fr;
     padding: 1rem;
     gap: 1.5rem;
-    max-width: 95%;
   }
 
   .ats_card {
-    transform: none;   
+    transform: none;   /* Don't pop out too much on mobile */
     box-shadow: 0 8px 18px rgba(0,0,0,0.28);
   }
 
   .card {
     padding: 1.2rem;
-    width: 30px;
   }
 
   .card h2 {
@@ -309,7 +307,7 @@ html, body {
   }
 
   .loader_text {
-    font-size: 13px;
+    font-size: 11px;
   }
 
   .card p {

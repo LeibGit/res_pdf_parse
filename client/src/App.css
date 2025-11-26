@@ -50,15 +50,15 @@ html, body {
 .user_inputs {
   margin-top: 8rem;
   display: flex;
+  width: 90%;
+  max-width: 600px;
   flex-direction: column;
   align-items: center;     
-  width: 100%;
-  max-width: 600px;
   margin-left: auto;
   margin-right: auto;          
 }
 
-/* Labels above inputs */
+
 .input_group {
   display: flex;
   flex-direction: column;
@@ -144,8 +144,7 @@ html, body {
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;2
-
+  height: 100vh;
 }
 
 

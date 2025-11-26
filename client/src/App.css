@@ -4,6 +4,11 @@
   padding: 0;
   text-align: center;
   box-sizing: border-box;
+  height: 100vh;        
+  height: 100dvh;      
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 body {
@@ -15,7 +20,9 @@ body {
 
 html, body {
   width: 100%;
-  overflow-x: hidden;
+  height: 100%;
+  overflow: hidden;
+  touch-action: none;
 }
 
 
@@ -212,9 +219,10 @@ html, body {
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  font-weight: 300;
-  font-size: 12px;
-  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  pointer-events: none;
+  color: #000;
 }
 
 .ats_description {
@@ -282,11 +290,6 @@ html, body {
   .ats_card {
     transform: none;   /* Don't pop out too much on mobile */
     box-shadow: 0 8px 18px rgba(0,0,0,0.28);
-  }
-
-  .ats_number {
-    right: 8px;
-    top: -20px;
   }
 
   .card {

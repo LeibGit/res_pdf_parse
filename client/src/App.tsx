@@ -114,7 +114,7 @@ function App() {
           </div>
         </div>
 
-        <button onClick={() => {
+        <button className='analyze_another' onClick={() => {
           setData(null);
           setFile(null);
           setJobPrompt("");

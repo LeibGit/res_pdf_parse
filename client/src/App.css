@@ -290,6 +290,7 @@ html, body {
     grid-template-columns: 1fr;
     padding: 1rem;
     gap: 1.5rem;
+    max-width: 95%;
   }
 
   .ats_card {
@@ -307,7 +308,7 @@ html, body {
   }
 
   .loader_text {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .card p {

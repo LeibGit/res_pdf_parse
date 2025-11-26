@@ -290,10 +290,11 @@ html, body {
     grid-template-columns: 1fr;
     padding: 1rem;
     gap: 1.5rem;
+    max-width: 95%;
   }
 
   .ats_card {
-    transform: none;   /* Don't pop out too much on mobile */
+    transform: none;   
     box-shadow: 0 8px 18px rgba(0,0,0,0.28);
   }
 

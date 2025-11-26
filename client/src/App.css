@@ -1,63 +1,66 @@
+/* GLOBAL RESETS & FIXES */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background: linear-gradient(180deg, #071026 0%, #000 100%);
+  color: #e6eef6;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  overflow-x: hidden;         /* allow vertical scroll but block horizontal */
+  overflow-y: auto;          /* FIX: enables scrolling globally */
+  touch-action: pan-y;        /* allow scrolling on mobile */
+}
+
+/* ROOT FIX — remove scroll lock */
 #root {
+  width: 100%;
   max-width: 100%;
   margin: 0 auto;
   padding: 0;
   text-align: center;
   box-sizing: border-box;
-  height: 100vh;        
-  height: 100dvh;      
+  
+  /* REMOVE THESE (they were causing the scrolling bugs)
+  height: 100dvh;
   overflow: hidden;
+  */
+
   display: flex;
   flex-direction: column;
-}
-
-body {
-      background: linear-gradient(180deg, #071026 0%, #000 100%);
-      color: #e6eef6;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      align-items: start;
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  touch-action: none;
+  min-height: 100dvh;  /* better mobile-safe height */
 }
 
 
+/* ============================
+   TAGLINE ANIMATION
+============================ */
 .tagline {
   display: inline-block;
   white-space: nowrap;
   overflow: hidden;         
   border-right: 0.12em solid #c000ff;  
-  animation: typing 2s steps(22, end),
-             blink .7s step-end infinite;
+  animation: typing 2s steps(22, end), blink .7s step-end infinite;
 }
 
-@keyframes typing {
-  from { width: 0 }
-  to { width: 22ch }   
-}
+@keyframes typing { from { width: 0 } to { width: 22ch } }
+@keyframes blink { from, to { border-color: transparent } 50% { border-color: #c000ff } }
 
 
-@keyframes blink {
-  from, to { border-color: transparent }
-  50% { border-color: #c000ff }
-}
-
+/* ============================
+   FORM SECTION
+============================ */
 .user_inputs {
   margin-top: 8rem;
   display: flex;
   flex-direction: column;
-  align-items: center;     
+  align-items: center;
   width: 100%;
   max-width: 600px;
   margin-left: auto;
-  margin-right: auto;          
+  margin-right: auto;
 }
 
-/* Labels above inputs */
 .input_group {
   display: flex;
   flex-direction: column;
@@ -66,109 +69,136 @@ html, body {
   margin-bottom: 20px;
 }
 
-.file_label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #e6eef6;
-  text-align: left;          
-}
-
+.file_label,
 .prompt_label {
   font-size: 14px;
   font-weight: 500;
-  color: #e6eef6;
-  text-align: left;   
+  text-align: left;
 }
 
-.job_prompt {
+.job_prompt,
+.resume_file {
   width: 100%;
   padding: 8px;
   border: 1px solid #cec6d0;
   border-radius: 8px;
   font-size: 14px;
+  background-color: #cec6d032;
+  color: white;
+}
+
+.job_prompt {
   min-height: 120px;
   resize: vertical;
-  background-color: #cec6d032;
-  color: white;
 }
 
-
-.resume_file {
-  border: 1px solid #ccc;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  background-color: #cec6d032;
-  color: white;
-  width: 100%;
-}
-
-.submit {
-  background-color: #7e728150;
-}
-
+/* Mobile spacing fix */
 @media (max-width: 600px) {
   .user_inputs {
-    margin-top: 3rem;        
-    padding: 0 1rem; 
-    width: 78%;        
+    margin-top: 3rem;
+    padding: 0 1rem;
+    width: 90%;
   }
 
   .job_prompt,
   .resume_file {
-    font-size: 15px;        
-  }
-  .tagline {
-    font-size: 14px;
+    font-size: 15px;
   }
 
-  .title {
-    font-size: 40px;
-  }
+  .tagline { font-size: 14px; }
+  .title { font-size: 40px; }
 }
 
 
+/* ============================
+   LOADER
+============================ */
 .loader {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: fixed;    
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;2
 
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  
+  /* allow scroll underneath but loader covers */
+  pointer-events: none;
 }
 
 
+/* ============================
+   RESULTS PAGE
+============================ */
 .results_grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 3rem 2rem;  /* more breathing room */
+}
+
+/* Mobile: single column */
+@media (max-width: 768px) {
+  .results_grid {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    gap: 1.5rem;
+  }
 }
 
 
+/* ============================
+   CARDS
+============================ */
 .card {
   background-color: #cec6d032;
-  padding: 20px;
+  padding: 28px;
   border-radius: 12px;
   color: #e6eef6;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   gap: 12px;
+  text-align: left;
 }
 
-.report_title {
-  font-weight: 500;
-  font-size: 30px;
+.card h2 {
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 8px;
+  text-align: center;
+  margin-top: 0;
 }
 
+.card p,
+.card ul,
+.card li {
+  white-space: normal;
+  line-height: 1.6;
+  font-size: 14px;
+  color: #e6eef6;
+  text-align: left;
+}
+
+.card ul {
+  padding-left: 1.2rem;
+}
+
+.card li {
+  margin-bottom: 6px;
+}
+
+.card li::marker {
+  color: #c000ff;
+}
+
+
+/* ============================
+   ATS SCORE BAR
+============================ */
 .ats_bar_container {
   position: relative;
   height: 15px;
@@ -181,38 +211,10 @@ html, body {
 .ats_bar {
   height: 100%;
   background: linear-gradient(90deg, #cebdde2d, #927ba7d9);
-  width: 0; 
+  width: 0;
   border-radius: 15px;
   transition: width 1s ease-out;
 }
-
-
-
-.card h2 {
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  padding-bottom: 8px;
-}
-
-
-.improvements_card p {
-  margin-left: 1rem;
-  text-indent: -0.5rem;
-  line-height: 1.6;
-}
-
-.improvements_card p + p {
-  margin-top: 0.5rem;
-}
-
-.results_grid {
-  padding-top: 3rem;
-  padding-bottom: 3rem;
-}
-
-.card {
-  padding: 28px;
-}
-
 
 .ats_number {
   position: absolute;
@@ -230,68 +232,11 @@ html, body {
   color: #ccc;
 }
 
-.card_text {
-  white-space: pre-line; 
-  line-height: 1.6;     
-  font-size: 14px;
-  color: #e6eef6;
-}
 
-
-/* Reset weird inherited text behavior */
-.card p, 
-.card ul, 
-.card li {
-  white-space: normal;
-  line-height: 1.6;
-  font-size: 14px;
-  color: #e6eef6;
-  text-align: left;
-}
-
-/* Make lists look clean */
-.card ul {
-  padding-left: 1.2rem;
-  margin: 0.5rem 0;
-}
-
-/* Make bullet spacing clean */
-.card li {
-  margin-bottom: 6px;
-}
-
-/* If your backend inserts "-" or "*" instead of real <li>, fix it */
-.card_text p {
-  margin-bottom: 10px;
-}
-
-/* Optional: style bullets to match your theme */
-.card li::marker {
-  color: #c000ff;       /* purple bullets */
-  font-size: 1rem;
-}
-
-.card {
-  text-align: left;
-}
-
-.card h2 {
-  text-align: center;
-}
-
-
+/* ============================
+   MOBILE CARD TYPO FIX
+============================ */
 @media (max-width: 768px) {
-  .results_grid {
-    grid-template-columns: 1fr;
-    padding: 1rem;
-    gap: 1.5rem;
-  }
-
-  .ats_card {
-    transform: none;   /* Don't pop out too much on mobile */
-    box-shadow: 0 8px 18px rgba(0,0,0,0.28);
-  }
-
   .card {
     padding: 1.2rem;
   }
@@ -299,10 +244,6 @@ html, body {
   .card h2 {
     font-size: 1.4rem;
     margin-bottom: 0.8rem;
-  }
-
-  .loader_text {
-    font-size: 11px;
   }
 
   .card p {

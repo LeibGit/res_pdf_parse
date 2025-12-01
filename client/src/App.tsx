@@ -142,11 +142,7 @@ function App() {
             onClick={() => setActivePanel('summary')}
           >
             <h2>Resume Summary</h2>
-            <p className="card_text">
-              {data.summary.length > 180
-                ? data.summary.slice(0, 180) + '...'
-                : data.summary}
-            </p>
+            <p className="card_meta">High-level overview of your resume.</p>
           </button>
 
           <button
@@ -159,11 +155,7 @@ function App() {
               <div className="ats_bar" style={{ width: `${data.ats_score}%` }}></div>
               <span className="ats_number">{data.ats_score}</span>
             </div>
-            <p className="card_text ats_description">
-              {data.ats_description.length > 140
-                ? data.ats_description.slice(0, 140) + '...'
-                : data.ats_description}
-            </p>
+            <p className="card_meta">How well your resume matches the job.</p>
           </button>
 
           <button
@@ -172,20 +164,7 @@ function App() {
             onClick={() => setActivePanel('improvements')}
           >
             <h2>Suggested Improvements</h2>
-            <div className="card_text">
-              {Array.isArray(data.recomendations) ? (
-                <ul>
-                  {data.recomendations.slice(0, 3).map((rec, index) => (
-                    <li key={index}>{rec}</li>
-                  ))}
-                  {data.recomendations.length > 3 && (
-                    <li>+ {data.recomendations.length - 3} more suggestions</li>
-                  )}
-                </ul>
-              ) : (
-                <p>{data.recomendations}</p>
-              )}
-            </div>
+            <p className="card_meta">Concrete changes to boost your resume.</p>
           </button>
 
           <button
@@ -194,20 +173,7 @@ function App() {
             onClick={() => setActivePanel('education')}
           >
             <h2>Education</h2>
-            <div className="card_text">
-              {data.education && data.education.length > 0 ? (
-                <ul>
-                  {data.education.slice(0, 3).map((edu, index) => (
-                    <li key={index}>{edu}</li>
-                  ))}
-                  {data.education.length > 3 && (
-                    <li>+ {data.education.length - 3} more entries</li>
-                  )}
-                </ul>
-              ) : (
-                <p>No education information found in resume.</p>
-              )}
-            </div>
+            <p className="card_meta">Your education history and highlights.</p>
           </button>
         </div>
 

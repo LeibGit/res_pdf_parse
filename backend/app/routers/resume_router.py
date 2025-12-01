@@ -43,7 +43,7 @@ async def analyze_resume_prompt(job_prompt: str = Form(...), resume_file: Upload
         logger.info(f"Found {len(education)} education entries")
 
         # Analyze with LLM
-        logger.info("Step 3: Analyzing with LLM...")
+        logger.info("Step 3: Analyzing with LLM (single call)...")
         analyzer = ResumeLLMAnalyzer(
             full_text=parsed_resume, 
             skills=skills, 
@@ -53,17 +53,18 @@ async def analyze_resume_prompt(job_prompt: str = Form(...), resume_file: Upload
             prompt=job_prompt
         )
 
-        logger.info("Getting summary...")
-        summary = analyzer.resume_summary()
-        
-        logger.info("Getting ATS score...")
-        ats_score = analyzer.ats_score()
-        
-        logger.info("Getting ATS description...")
-        ats_description = analyzer.ats_description()
-        
-        logger.info("Getting recommendations...")
-        recomendations = analyzer.resume_recomendations()
+        logger.info("Calling unified analyze_all...")
+        llm_result = analyzer.analyze_all()
+
+        # If the unified call returned an error object, surface it cleanly
+        if isinstance(llm_result, dict) and "error" in llm_result:
+            logger.error(f"LLM error: {llm_result}")
+            raise HTTPException(status_code=500, detail=llm_result)
+
+        summary = llm_result.get("summary")
+        ats_score = llm_result.get("ats_score")
+        ats_description = llm_result.get("ats_description")
+        recomendations = llm_result.get("recomendations")
         
         logger.info("=== ANALYSIS COMPLETE ===")
         

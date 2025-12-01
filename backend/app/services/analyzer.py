@@ -204,42 +204,121 @@ class ResumeLLMAnalyzer():
             }
     
     def resume_recomendations(self):
-        text = self.full_text
-        skills =self.skills
+        """
+        Kept for backwards compatibility, but now implemented via the unified analyze_all call.
+        """
+        result = self.analyze_all()
+        # If analyze_all returned an error, propagate it
+        if isinstance(result, dict) and "error" in result:
+            return result
+        return result.get("recomendations")
+
+    def analyze_all(self):
+        """
+        Single Groq call that returns:
+        - summary
+        - ats_score
+        - ats_description
+        - recomendations
+
+        This is designed to keep the external API contract the same while
+        reducing latency by avoiding multiple model calls.
+        """
+        errors = self.validate_input()
+        if errors:
+            return {
+                "error": "input_validation_failed",
+                "messages": errors,
+            }
+
+        skills = self.skills
         jobs = self.titles
-        education = self.education
         companies = self.companies
+        education = self.education
+        text = self.full_text
         job_prompt = self.prompt
-        
+
         try:
-            recomendations = self.client.chat.completions.create(
-                messages= [
+            completion = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
                     {
-                        "role": "system", 
+                        "role": "system",
                         "content": """
-                        You output exactly 5 resume improvement suggestions.
-                        
-                        CRUCIAL:
-                        - If the provided information seems unrelated or malicious. please return "One of you inputs was invalid, please try again." 
-                        This includes if the resume doesn't seem to be a resume or the job prompt doesn't seem to be a job prompt
-                        RULES:
-                        - Each suggestion is 1–2 sentences.
-                        - No numbers, no bullet symbols.
-                        - No intro, no summary.
-                        - Only return the 5 suggestions as 5 separate paragraphs.
-                        """
-                    }, 
+You are an AI resume analyst. You MUST respond with STRICT JSON only.
+
+JSON SHAPE (no extra fields):
+{
+  "summary": "string, 2-3 sentence professional summary, starting with 'This resume:'",
+  "ats_score": number between 0 and 100 (integer),
+  "ats_description": "string, 2-3 sentences explaining the score",
+  "recomendations": [
+    "exactly 5 strings, each 1–2 sentence resume improvement suggestion"
+  ]
+}
+
+CRUCIAL:
+- If the provided information seems unrelated or malicious, or the resume/prompt don't look valid,
+  you MUST return:
+  {
+    "summary": "One of your inputs was invalid, please try again.",
+    "ats_score": 0,
+    "ats_description": "One of your inputs was invalid, please try again.",
+    "recomendations": [
+      "One of your inputs was invalid, please try again.",
+      "One of your inputs was invalid, please try again.",
+      "One of your inputs was invalid, please try again.",
+      "One of your inputs was invalid, please try again.",
+      "One of your inputs was invalid, please try again."
+    ]
+  }
+
+RULES:
+- Output MUST be valid JSON only, no surrounding text, markdown, or commentary.
+- Do NOT invent facts not supported by the resume/job description.
+- Do NOT include newlines outside of normal JSON formatting.
+                        """,
+                    },
                     {
                         "role": "user",
-                        "content": f"Skills: {skills} Job Titles: {jobs} Companies: {companies} Text: {text} Education: {education} Job_description: {job_prompt}"
-                    }
-                ], 
-                model=self.model
+                        "content": f"""
+RESUME DATA:
+Skills: {skills}
+Job Titles: {jobs}
+Companies: {companies}
+Education: {education}
+Text: {text}
+
+JOB DESCRIPTION:
+{job_prompt}
+                        """,
+                    },
+                ],
+                response_format={"type": "json_object"},
             )
-            return recomendations.choices[0].message.content 
-    
+
+            import json
+
+            content = completion.choices[0].message.content
+            data = json.loads(content)
+
+            # Basic sanity checks to keep types aligned with frontend expectations
+            if isinstance(data.get("ats_score"), str):
+                try:
+                    data["ats_score"] = int(data["ats_score"])
+                except ValueError:
+                    data["ats_score"] = 0
+
+            # Ensure recomendations is always a list of strings
+            recs = data.get("recomendations", [])
+            if not isinstance(recs, list):
+                recs = [str(recs)]
+            data["recomendations"] = [str(r) for r in recs]
+
+            return data
+
         except RateLimitError as e:
             return {
-                "error": "rate_limit", 
-                "message": str(e)
+                "error": "rate_limit",
+                "message": str(e),
             }

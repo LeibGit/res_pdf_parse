@@ -16,6 +16,7 @@ function App() {
   const [data, setData] = useState<ResumeResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [jobPrompt, setJobPrompt] = useState("");
+  const [showRating, setShowRating] = useState(false);
 
   const endpoint = "https://res-pdf-parse.onrender.com";
 
@@ -65,6 +66,7 @@ function App() {
     }
   };
 
+  // -------------------------- ERROR PAGE --------------------------
   if (error) {
     return (
       <div className="error">
@@ -78,6 +80,55 @@ function App() {
     );
   }
 
+  // -------------------------- RATING PAGE --------------------------
+  if (showRating) {
+    return (
+      <div className="rating_page">
+        <h1>Rate Your AI Resume Report</h1>
+
+        <form 
+          action="https://formspree.io/f/xgvgyekd" 
+          method="POST" 
+          className="rating_form"
+        >
+          <label>
+            Your Email:
+            <input type="email" name="email" required />
+          </label>
+
+          <label>
+            Your Rating:
+            <select name="rating" required>
+              <option value="">Select a rating</option>
+              <option value="5">⭐⭐⭐⭐⭐ — Excellent</option>
+              <option value="4">⭐⭐⭐⭐ — Good</option>
+              <option value="3">⭐⭐⭐ — Okay</option>
+              <option value="2">⭐⭐ — Poor</option>
+              <option value="1">⭐ — Terrible</option>
+            </select>
+          </label>
+
+          <label>
+            Additional Comments:
+            <textarea name="comments" rows={4}></textarea>
+          </label>
+
+          <button type="submit" className="submit_rating">
+            Submit Rating
+          </button>
+        </form>
+
+        <button
+          className="analyze_another"
+          onClick={() => setShowRating(false)}
+        >
+          Back to Report
+        </button>
+      </div>
+    );
+  }
+
+  // -------------------------- RESULTS PAGE --------------------------
   if (data) {
     return (
       <div className="results">
@@ -115,42 +166,14 @@ function App() {
           </div>
   
         </div>
-  
-        {/* ⭐ ADD RATING FORM HERE */}
-        <h2 className="rating_title">Rate Your AI Report</h2>
-  
-        <form 
-          action="https://formspree.io/f/xgvgyekd" 
-          method="POST" 
-          className="rating_form"
+
+        <button
+          className="submit_rating"
+          onClick={() => setShowRating(true)}
         >
-          <label>
-            Your Email:
-            <input type="email" name="email" required />
-          </label>
-  
-          <label>
-            Your Rating:
-            <select name="rating" required>
-              <option value="">Select a rating</option>
-              <option value="5">⭐⭐⭐⭐⭐ — Excellent</option>
-              <option value="4">⭐⭐⭐⭐ — Good</option>
-              <option value="3">⭐⭐⭐ — Okay</option>
-              <option value="2">⭐⭐ — Poor</option>
-              <option value="1">⭐ — Terrible</option>
-            </select>
-          </label>
-  
-          <label>
-            Additional Comments:
-            <textarea name="comments" rows={4}></textarea>
-          </label>
-  
-          <button type="submit" className="submit_rating">
-            Submit Rating
-          </button>
-        </form>
-  
+          Rate Your Experience
+        </button>
+
         <button className='analyze_another' onClick={() => {
           setData(null);
           setFile(null);

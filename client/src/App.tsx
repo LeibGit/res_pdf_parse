@@ -17,6 +17,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [jobPrompt, setJobPrompt] = useState("");
   const [showRating, setShowRating] = useState(false);
+  const [activePanel, setActivePanel] = useState<'summary' | 'ats' | 'improvements' | 'education'>('summary');
 
   const endpoint = "https://res-pdf-parse.onrender.com";
 
@@ -133,38 +134,137 @@ function App() {
     return (
       <div className="results">
         <h1 className='report_title'>AI Resume Report</h1>
-  
+        
         <div className="results_grid">
-  
-          <div className="card summary_card">
+          <button
+            type="button"
+            className={`card summary_card ${activePanel === 'summary' ? 'card_active' : ''}`}
+            onClick={() => setActivePanel('summary')}
+          >
             <h2>Resume Summary</h2>
-            <p className="card_text">{data.summary}</p>
-          </div>
-  
-          <div className="card ats_card">
+            <p className="card_text">
+              {data.summary.length > 180
+                ? data.summary.slice(0, 180) + '...'
+                : data.summary}
+            </p>
+          </button>
+
+          <button
+            type="button"
+            className={`card ats_card ${activePanel === 'ats' ? 'card_active' : ''}`}
+            onClick={() => setActivePanel('ats')}
+          >
             <h2>ATS Score</h2>
             <div className="ats_bar_container">
               <div className="ats_bar" style={{ width: `${data.ats_score}%` }}></div>
               <span className="ats_number">{data.ats_score}</span>
             </div>
-            <p className="card_text ats_description">{data.ats_description}</p>
-          </div>
-  
-          <div className="card improvements_card">
+            <p className="card_text ats_description">
+              {data.ats_description.length > 140
+                ? data.ats_description.slice(0, 140) + '...'
+                : data.ats_description}
+            </p>
+          </button>
+
+          <button
+            type="button"
+            className={`card improvements_card ${activePanel === 'improvements' ? 'card_active' : ''}`}
+            onClick={() => setActivePanel('improvements')}
+          >
             <h2>Suggested Improvements</h2>
             <div className="card_text">
               {Array.isArray(data.recomendations) ? (
                 <ul>
-                  {data.recomendations.map((rec, index) => (
+                  {data.recomendations.slice(0, 3).map((rec, index) => (
                     <li key={index}>{rec}</li>
                   ))}
+                  {data.recomendations.length > 3 && (
+                    <li>+ {data.recomendations.length - 3} more suggestions</li>
+                  )}
                 </ul>
               ) : (
                 <p>{data.recomendations}</p>
               )}
             </div>
-          </div>
-  
+          </button>
+
+          <button
+            type="button"
+            className={`card education_card ${activePanel === 'education' ? 'card_active' : ''}`}
+            onClick={() => setActivePanel('education')}
+          >
+            <h2>Education</h2>
+            <div className="card_text">
+              {data.education && data.education.length > 0 ? (
+                <ul>
+                  {data.education.slice(0, 3).map((edu, index) => (
+                    <li key={index}>{edu}</li>
+                  ))}
+                  {data.education.length > 3 && (
+                    <li>+ {data.education.length - 3} more entries</li>
+                  )}
+                </ul>
+              ) : (
+                <p>No education information found in resume.</p>
+              )}
+            </div>
+          </button>
+        </div>
+
+        <div className="details_panel">
+          {activePanel === 'summary' && (
+            <>
+              <h2>Full Resume Summary</h2>
+              <p className="card_text">{data.summary}</p>
+            </>
+          )}
+
+          {activePanel === 'ats' && (
+            <>
+              <h2>ATS Score Details</h2>
+              <div className="ats_bar_container">
+                <div className="ats_bar" style={{ width: `${data.ats_score}%` }}></div>
+                <span className="ats_number">{data.ats_score}</span>
+              </div>
+              <p className="card_text ats_description">{data.ats_description}</p>
+            </>
+          )}
+
+          {activePanel === 'improvements' && (
+            <>
+              <h2>All Suggested Improvements</h2>
+              <div className="card_text">
+                {Array.isArray(data.recomendations) ? (
+                  <ul>
+                    {data.recomendations.map((rec, index) => (
+                      <li key={index}>{rec}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>{data.recomendations}</p>
+                )}
+              </div>
+            </>
+          )}
+
+          {activePanel === 'education' && (
+            <>
+              <h2>Education Details</h2>
+              <div className="card_text">
+                {data.education && data.education.length > 0 ? (
+                  <ul style={{ listStyle: 'none', padding: 0 }}>
+                    {data.education.map((edu, index) => (
+                      <li key={index} style={{ marginBottom: '0.5rem' }}>
+                        {edu}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No education information found in resume.</p>
+                )}
+              </div>
+            </>
+          )}
         </div>
 
         <button

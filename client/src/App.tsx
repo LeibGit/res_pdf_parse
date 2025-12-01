@@ -169,18 +169,13 @@ function App() {
             onClick={() => setActivePanel('ats')}
           >
             <h2>ATS Score</h2>
-            <div className="ats_bar_container">
-              <div className="ats_bar" style={{ width: `${data.ats_score}%` }}></div>
-              <span className="ats_number">{data.ats_score}</span>
-            </div>
             <p className="card_meta">How well your resume matches the job.</p>
 
             {isMobile && activePanel === 'ats' && (
               <div className="card_expand">
-                <div className="ats_bar_container">
-                  <div className="ats_bar" style={{ width: `${data.ats_score}%` }}></div>
-                  <span className="ats_number">{data.ats_score}</span>
-                </div>
+                <p className="card_text">
+                  <strong>ATS Score:</strong> {data.ats_score}
+                </p>
                 <p className="card_text ats_description">{data.ats_description}</p>
               </div>
             )}
@@ -225,10 +220,9 @@ function App() {
             {activePanel === 'ats' && (
               <>
                 <h2>ATS Score Details</h2>
-                <div className="ats_bar_container">
-                  <div className="ats_bar" style={{ width: `${data.ats_score}%` }}></div>
-                  <span className="ats_number">{data.ats_score}</span>
-                </div>
+                <p className="card_text">
+                  <strong>ATS Score:</strong> {data.ats_score}
+                </p>
                 <p className="card_text ats_description">{data.ats_description}</p>
               </>
             )}

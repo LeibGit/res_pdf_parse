@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { RingLoader } from 'react-spinners';
 import './App.css';
 
@@ -17,6 +17,19 @@ function App() {
   const [jobPrompt, setJobPrompt] = useState("");
   const [showRating, setShowRating] = useState(false);
   const [activePanel, setActivePanel] = useState<'summary' | 'ats' | 'improvements'>('summary');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (typeof window !== 'undefined') {
+        setIsMobile(window.innerWidth <= 768);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const endpoint = "https://res-pdf-parse.onrender.com";
 
@@ -142,6 +155,12 @@ function App() {
           >
             <h2>Resume Summary</h2>
             <p className="card_meta">High-level overview of your resume.</p>
+
+            {isMobile && activePanel === 'summary' && (
+              <div className="card_expand">
+                <p className="card_text">{data.summary}</p>
+              </div>
+            )}
           </button>
 
           <button
@@ -155,6 +174,16 @@ function App() {
               <span className="ats_number">{data.ats_score}</span>
             </div>
             <p className="card_meta">How well your resume matches the job.</p>
+
+            {isMobile && activePanel === 'ats' && (
+              <div className="card_expand">
+                <div className="ats_bar_container">
+                  <div className="ats_bar" style={{ width: `${data.ats_score}%` }}></div>
+                  <span className="ats_number">{data.ats_score}</span>
+                </div>
+                <p className="card_text ats_description">{data.ats_description}</p>
+              </div>
+            )}
           </button>
 
           <button
@@ -164,47 +193,64 @@ function App() {
           >
             <h2>Suggested Improvements</h2>
             <p className="card_meta">Concrete changes to boost your resume.</p>
+
+            {isMobile && activePanel === 'improvements' && (
+              <div className="card_expand">
+                <div className="card_text">
+                  {Array.isArray(data.recomendations) ? (
+                    <ul>
+                      {data.recomendations.map((rec, index) => (
+                        <li key={index}>{rec}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>{data.recomendations}</p>
+                  )}
+                </div>
+              </div>
+            )}
           </button>
 
         </div>
 
-        <div className="details_panel">
-          {activePanel === 'summary' && (
-            <>
-              <h2>Full Resume Summary</h2>
-              <p className="card_text">{data.summary}</p>
-            </>
-          )}
+        {!isMobile && (
+          <div className="details_panel">
+            {activePanel === 'summary' && (
+              <>
+                <h2>Full Resume Summary</h2>
+                <p className="card_text">{data.summary}</p>
+              </>
+            )}
 
-          {activePanel === 'ats' && (
-            <>
-              <h2>ATS Score Details</h2>
-              <div className="ats_bar_container">
-                <div className="ats_bar" style={{ width: `${data.ats_score}%` }}></div>
-                <span className="ats_number">{data.ats_score}</span>
-              </div>
-              <p className="card_text ats_description">{data.ats_description}</p>
-            </>
-          )}
+            {activePanel === 'ats' && (
+              <>
+                <h2>ATS Score Details</h2>
+                <div className="ats_bar_container">
+                  <div className="ats_bar" style={{ width: `${data.ats_score}%` }}></div>
+                  <span className="ats_number">{data.ats_score}</span>
+                </div>
+                <p className="card_text ats_description">{data.ats_description}</p>
+              </>
+            )}
 
-          {activePanel === 'improvements' && (
-            <>
-              <h2>All Suggested Improvements</h2>
-              <div className="card_text">
-                {Array.isArray(data.recomendations) ? (
-                  <ul>
-                    {data.recomendations.map((rec, index) => (
-                      <li key={index}>{rec}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>{data.recomendations}</p>
-                )}
-              </div>
-            </>
-          )}
-
-        </div>
+            {activePanel === 'improvements' && (
+              <>
+                <h2>All Suggested Improvements</h2>
+                <div className="card_text">
+                  {Array.isArray(data.recomendations) ? (
+                    <ul>
+                      {data.recomendations.map((rec, index) => (
+                        <li key={index}>{rec}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>{data.recomendations}</p>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        )}
 
         <button
           className="submit_rating"

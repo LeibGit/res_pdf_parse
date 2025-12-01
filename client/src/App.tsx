@@ -82,13 +82,14 @@ function App() {
     return (
       <div className="results">
         <h1 className='report_title'>AI Resume Report</h1>
+  
         <div className="results_grid">
-
+  
           <div className="card summary_card">
             <h2>Resume Summary</h2>
             <p className="card_text">{data.summary}</p>
           </div>
-
+  
           <div className="card ats_card">
             <h2>ATS Score</h2>
             <div className="ats_bar_container">
@@ -97,7 +98,7 @@ function App() {
             </div>
             <p className="card_text ats_description">{data.ats_description}</p>
           </div>
-
+  
           <div className="card improvements_card">
             <h2>Suggested Improvements</h2>
             <div className="card_text">
@@ -112,8 +113,44 @@ function App() {
               )}
             </div>
           </div>
+  
         </div>
-
+  
+        {/* ⭐ ADD RATING FORM HERE */}
+        <h2 className="rating_title">Rate Your AI Report</h2>
+  
+        <form 
+          action="https://formspree.io/f/xgvgyekd" 
+          method="POST" 
+          className="rating_form"
+        >
+          <label>
+            Your Email:
+            <input type="email" name="email" required />
+          </label>
+  
+          <label>
+            Your Rating:
+            <select name="rating" required>
+              <option value="">Select a rating</option>
+              <option value="5">⭐⭐⭐⭐⭐ — Excellent</option>
+              <option value="4">⭐⭐⭐⭐ — Good</option>
+              <option value="3">⭐⭐⭐ — Okay</option>
+              <option value="2">⭐⭐ — Poor</option>
+              <option value="1">⭐ — Terrible</option>
+            </select>
+          </label>
+  
+          <label>
+            Additional Comments:
+            <textarea name="comments" rows={4}></textarea>
+          </label>
+  
+          <button type="submit" className="submit_rating">
+            Submit Rating
+          </button>
+        </form>
+  
         <button className='analyze_another' onClick={() => {
           setData(null);
           setFile(null);
@@ -122,6 +159,7 @@ function App() {
       </div>
     );
   }
+  
 
   if (loading) {
     return (

@@ -127,7 +127,7 @@ class ResumeLLMAnalyzer():
                     - Companies/work experience relevance
                     - Critisize anything that is not relevant to the job description or the resume
                     - deduct points for anything that is not relevant to the job description or the resume
-                    - deduct points if companies worked at are less prestigious than the job description
+                    - deduct points if companies worked at are less prestigious than the job description. for example, doing software engineering at an unheard of company should get a low score if applying to a company like apple
                     - Education relevance
                     - Alignment with job description
                     - Quality of resume text (deduct for disorganization, spelling issues, etc.)

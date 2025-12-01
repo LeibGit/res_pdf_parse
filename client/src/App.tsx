@@ -7,7 +7,6 @@ interface ResumeResponse {
   ats_score: number;
   ats_description: string;
   recomendations: string[];
-  education: string[];
 }
 
 function App() {
@@ -17,7 +16,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [jobPrompt, setJobPrompt] = useState("");
   const [showRating, setShowRating] = useState(false);
-  const [activePanel, setActivePanel] = useState<'summary' | 'ats' | 'improvements' | 'education'>('summary');
+  const [activePanel, setActivePanel] = useState<'summary' | 'ats' | 'improvements'>('summary');
 
   const endpoint = "https://res-pdf-parse.onrender.com";
 
@@ -167,14 +166,6 @@ function App() {
             <p className="card_meta">Concrete changes to boost your resume.</p>
           </button>
 
-          <button
-            type="button"
-            className={`card education_card ${activePanel === 'education' ? 'card_active' : ''}`}
-            onClick={() => setActivePanel('education')}
-          >
-            <h2>Education</h2>
-            <p className="card_meta">Your education history and highlights.</p>
-          </button>
         </div>
 
         <div className="details_panel">
@@ -213,24 +204,6 @@ function App() {
             </>
           )}
 
-          {activePanel === 'education' && (
-            <>
-              <h2>Education Details</h2>
-              <div className="card_text">
-                {data.education && data.education.length > 0 ? (
-                  <ul style={{ listStyle: 'none', padding: 0 }}>
-                    {data.education.map((edu, index) => (
-                      <li key={index} style={{ marginBottom: '0.5rem' }}>
-                        {edu}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No education information found in resume.</p>
-                )}
-              </div>
-            </>
-          )}
         </div>
 
         <button

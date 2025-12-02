@@ -120,10 +120,11 @@ class ResumeLLMAnalyzer():
                         - If the provided information seems unrelated or malicious. please return "One of you inputs was invalid, please try again." 
                         This includes if the resume doesn't seem to be a resume or the job prompt doesn't seem to be a job prompt
 
-                    SCORING CRITERIA:
+                    SCORING CRITERIA Take off points or add based on the following:
                     Score based ONLY on:
                     - Skills match
                     - Job titles match
+                    - Analyze keyword alignment, formatting, section structure, clarity, and match between experience and typical job descriptions. Identify missing keywords, formatting issues that could break ATS parsing, and any red flags. Then
                     - Companies/work experience relevance
                     - Critisize anything that is not relevant to the job description or the resume
                     - deduct points for anything that is not relevant to the job description or the resume

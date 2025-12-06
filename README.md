@@ -1,6 +1,6 @@
-# 🧠 Resume AI — Automated Resume Scoring & Enhancement Tool
+# 🧠 Rez AI — Automated Resume Scoring & Enhancement Tool
 
-Resume AI is a lightweight machine-learning–powered tool designed to **analyze résumés, score them for ATS compatibility, and provide actionable suggestions for improvement**.  
+Rez AI is a lightweight machine-learning–powered tool designed to **analyze résumés, score them for ATS compatibility, and provide actionable suggestions for improvement**.  
 It uses NLP techniques to evaluate clarity, keyword alignment, formatting, and overall job-fit strength.
 
 ---
@@ -26,12 +26,12 @@ It uses NLP techniques to evaluate clarity, keyword alignment, formatting, and o
 
 ## 🛠️ Tech Stack
 
-- **Python 3.10+**
+- **Python**
 - **FastAPI** — backend API  
-- **OpenAI API** — NLP evaluation  
+- **Groq API** — NLP evaluation  
 - **SpaCy** — keyword extraction and parsing  
 - **PyPDF2** / **pdfplumber** — PDF text extraction  
-- **React / Next.js** (optional UI)
+- **React **
 
 ---
 

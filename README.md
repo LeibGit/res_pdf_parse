@@ -2,6 +2,10 @@
 
 Rez AI is a lightweight machine-learning–powered tool designed to **analyze résumés, score them for ATS compatibility, and provide actionable suggestions for improvement**.  
 It uses NLP techniques to evaluate clarity, keyword alignment, formatting, and overall job-fit strength.
+---
+## 🔗 Live Demo
+
+👉 **View the Demo:** https://res-pdf-parse.vercel.app/  
 
 ---
 
